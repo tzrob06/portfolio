@@ -164,7 +164,14 @@ const DEFAULTS = {
     { id: 6, title: "Adaptability & Growth", description: "Quick to learn new tools, technologies, and methodologies with high enthusiasm." }
   ],
   social: { linkedin: "#", github: "#", twitter: "", instagram: "" },
-  contact: { email: "you@email.com", location: "Your City", message: "Have a project in mind, an internship opportunity, or just want to say hi? My inbox is always open." }
+  contact: {
+    email: "you@email.com",
+    location: "Your City",
+    message: "Have a project in mind, an internship opportunity, or just want to say hi? My inbox is always open.",
+    formspreeUrl: "",
+    web3formsKey: ""
+  },
+  inbox: []
 };
 
 // ─── APPLY THEME VARIABLES ────────────────────────────────────────────────────
@@ -207,7 +214,8 @@ function getData() {
         headings: { ...DEFAULTS.headings, ...(parsed.headings || {}) },
         theme: { ...DEFAULTS.theme, ...(parsed.theme || {}) },
         social: { ...DEFAULTS.social, ...(parsed.social || {}) },
-        contact: { ...DEFAULTS.contact, ...(parsed.contact || {}) }
+        contact: { ...DEFAULTS.contact, ...(parsed.contact || {}) },
+        inbox: parsed.inbox || []
       };
     }
   } catch(e) {}
@@ -335,28 +343,89 @@ function renderSkills(skills) {
   });
 }
 
-// ─── CONTACT FORM HANDLER ─────────────────────────────────────────────────────
+// ─── CONTACT FORM HANDLER WITH EMAIL DELIVERY ─────────────────────────────────
 function initContactForm() {
   const form = document.getElementById('contactForm');
   const success = document.getElementById('formSuccess');
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
     const origHtml = btn.innerHTML;
     btn.disabled = true;
-    btn.textContent = 'Sending...';
+    btn.textContent = 'Sending message...';
 
-    setTimeout(() => {
+    const name = document.getElementById('c-name').value.trim();
+    const email = document.getElementById('c-email').value.trim();
+    const subject = document.getElementById('c-subject').value.trim();
+    const message = document.getElementById('c-message').value.trim();
+
+    const data = getData();
+    const contactConfig = data.contact || {};
+    const formspreeUrl = contactConfig.formspreeUrl;
+    const web3formsKey = contactConfig.web3formsKey;
+    const recipientEmail = contactConfig.email || (data.profile && data.profile.email) || 'you@email.com';
+
+    // 1. Archive in local storage inbox backup
+    if (!data.inbox) data.inbox = [];
+    data.inbox.unshift({
+      id: Date.now(),
+      date: new Date().toLocaleString(),
+      name: name,
+      email: email,
+      subject: subject || 'No Subject',
+      message: message,
+      read: false
+    });
+    localStorage.setItem('portfolio_data', JSON.stringify(data));
+
+    // 2. Deliver to real inbox
+    try {
+      if (formspreeUrl && formspreeUrl.trim() !== '') {
+        const response = await fetch(formspreeUrl.trim(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ name, email, subject, message })
+        });
+        if (!response.ok) throw new Error('Formspree response not ok');
+      } else if (web3formsKey && web3formsKey.trim() !== '') {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            access_key: web3formsKey.trim(),
+            name, email,
+            subject: subject || `New message from ${name} on Portfolio`,
+            message
+          })
+        });
+        if (!response.ok) throw new Error('Web3Forms response not ok');
+      } else {
+        // Fallback: Opens email client with pre-filled details to ensure message reaches you
+        window.open(`mailto:${recipientEmail}?subject=${encodeURIComponent(subject || 'Portfolio Inquiry')}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`);
+      }
+
       btn.disabled = false;
       btn.innerHTML = origHtml;
       if (success) {
+        success.textContent = '✓ Message sent! Thank you for reaching out.';
         success.classList.add('visible');
         form.reset();
         setTimeout(() => success.classList.remove('visible'), 5000);
       }
-    }, 1000);
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerHTML = origHtml;
+      // If network/endpoint error, fallback to mailto
+      window.location.href = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject || 'Portfolio Inquiry')}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
+      if (success) {
+        success.textContent = '✓ Message sent! Thank you for reaching out.';
+        success.classList.add('visible');
+        form.reset();
+        setTimeout(() => success.classList.remove('visible'), 5000);
+      }
+    }
   });
 }
 

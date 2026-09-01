@@ -71,6 +71,7 @@ function loadAdminDashboard() {
   populateHeadingsTab();
   populateProjectsTab();
   populateSkillsTab();
+  populateInboxTab();
   populateContactTab();
   populateThemeTab();
   setupSettingsTab();
@@ -92,6 +93,10 @@ function setupTabs() {
       tab.classList.add('active');
       const target = document.getElementById(`tab-${tab.dataset.tab}`);
       if (target) target.classList.add('active');
+
+      if (tab.dataset.tab === 'inbox') {
+        renderInboxList();
+      }
     });
   });
 }
@@ -258,6 +263,81 @@ function updatePhotoThumb(thumbId, removeBtnId, url) {
     if (removeBtn) removeBtn.style.display = 'none';
   }
 }
+
+// ─── INBOX & MESSAGES TAB ─────────────────────────────────────────────────────
+function populateInboxTab() {
+  renderInboxList();
+  document.getElementById('clear-inbox-btn').addEventListener('click', () => {
+    if (confirm('Are you sure you want to clear all messages from your inbox archive?')) {
+      const currentData = getData();
+      currentData.inbox = [];
+      saveData(currentData);
+      renderInboxList();
+    }
+  });
+}
+
+function renderInboxList() {
+  const container = document.getElementById('inbox-list');
+  const badge = document.getElementById('inbox-badge');
+  const d = getData();
+  const list = d.inbox || [];
+  container.innerHTML = '';
+
+  const unreadCount = list.filter(m => !m.read).length;
+  if (badge) {
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  if (list.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-muted); font-size:0.875rem; text-align:center; padding:2rem 0;">No messages received yet. When visitors fill out your contact form, submissions will appear here!</p>';
+    return;
+  }
+
+  list.forEach(msg => {
+    const card = document.createElement('div');
+    card.className = `inbox-card ${!msg.read ? 'unread' : ''}`;
+    card.innerHTML = `
+      <div class="inbox-header">
+        <div>
+          <span class="inbox-sender">${msg.name || 'Anonymous'}</span>
+          <a href="mailto:${msg.email}" class="inbox-email">${msg.email || 'No email provided'}</a>
+        </div>
+        <span class="inbox-date">${msg.date || ''}</span>
+      </div>
+      <div class="inbox-subject">Subject: ${msg.subject || 'No Subject'}</div>
+      <div class="inbox-body">${msg.message || ''}</div>
+      <div class="inbox-actions">
+        <a href="mailto:${msg.email}?subject=${encodeURIComponent('Re: ' + (msg.subject || 'Portfolio Inquiry'))}" class="btn btn-ghost" style="padding:0.35rem 0.75rem; font-size:0.8rem;">Reply via Email</a>
+        <button type="button" class="btn btn-ghost" style="padding:0.35rem 0.75rem; font-size:0.8rem;" onclick="toggleReadMessage(${msg.id})">${msg.read ? 'Mark Unread' : 'Mark as Read'}</button>
+        <button type="button" class="btn btn-danger" style="padding:0.35rem 0.75rem; font-size:0.8rem;" onclick="deleteMessage(${msg.id})">Delete</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+window.toggleReadMessage = function(id) {
+  const currentData = getData();
+  const msg = (currentData.inbox || []).find(m => m.id === id);
+  if (msg) {
+    msg.read = !msg.read;
+    saveData(currentData);
+    renderInboxList();
+  }
+};
+
+window.deleteMessage = function(id) {
+  const currentData = getData();
+  currentData.inbox = (currentData.inbox || []).filter(m => m.id !== id);
+  saveData(currentData);
+  renderInboxList();
+};
 
 // ─── PROJECTS TAB & IMAGE UPLOAD ──────────────────────────────────────────────
 function populateProjectsTab() {
@@ -463,11 +543,14 @@ function openSkillModal(item = null) {
   openModal('skill-modal');
 }
 
-// ─── CONTACT & SOCIAL TAB ─────────────────────────────────────────────────────
+// ─── CONTACT & EMAIL SETUP TAB ────────────────────────────────────────────────
 function populateContactTab() {
   const d = getData();
   const contact = d.contact || DEFAULTS.contact;
   const social = d.social || DEFAULTS.social;
+
+  document.getElementById('contact-formspree').value = contact.formspreeUrl || '';
+  document.getElementById('contact-web3forms').value = contact.web3formsKey || '';
 
   document.getElementById('contact-email').value = contact.email || '';
   document.getElementById('contact-loc').value = contact.location || '';
@@ -483,6 +566,8 @@ function populateContactTab() {
     e.preventDefault();
     const currentData = getData();
     currentData.contact = {
+      formspreeUrl: document.getElementById('contact-formspree').value.trim(),
+      web3formsKey: document.getElementById('contact-web3forms').value.trim(),
       email: document.getElementById('contact-email').value.trim(),
       location: document.getElementById('contact-loc').value.trim(),
       message: document.getElementById('contact-msg-input').value.trim()
