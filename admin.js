@@ -1,4 +1,4 @@
-// ─── ADMIN AUTHENTICATION & MANAGEMENT ──────────────────────────────────────────
+// ─── ADMIN AUTHENTICATION & MANAGEMENT (DARK GREEN THEME) ─────────────────────────
 
 const DEFAULT_PASSWORD = 'admin123';
 
@@ -64,7 +64,6 @@ function loadAdminDashboard() {
   populateProfileTab();
   populateProjectsTab();
   populateSkillsTab();
-  populateTestimonialTab();
   populateContactTab();
   setupSettingsTab();
 
@@ -183,7 +182,7 @@ function renderProjectsAdminList() {
     row.className = 'item-row';
     row.innerHTML = `
       <div class="item-row-body">
-        <div class="item-row-title">${item.title} <span style="font-weight:400; color:var(--text-muted); font-size:0.75rem;">(${item.year || 'N/A'}) - ${item.category || 'General'}</span></div>
+        <div class="item-row-title">${item.title} <span style="font-weight:400; color:var(--text-muted); font-size:0.75rem;">(${item.year || 'N/A'}) &middot; ${item.category || 'General'}</span></div>
         <div class="item-row-desc">${item.description}</div>
       </div>
       <div class="item-row-actions">
@@ -307,30 +306,6 @@ function openSkillModal(item = null) {
   openModal('skill-modal');
 }
 
-// ─── TESTIMONIAL TAB ──────────────────────────────────────────────────────────
-function populateTestimonialTab() {
-  const d = getData();
-  const t = (d.testimonials && d.testimonials[0]) ? d.testimonials[0] : (DEFAULTS.testimonials[0] || {});
-
-  document.getElementById('test-quote').value = t.quote || '';
-  document.getElementById('test-author').value = t.author || '';
-  document.getElementById('test-role').value = t.role || '';
-
-  const form = document.getElementById('testimonial-form');
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const currentData = getData();
-    currentData.testimonials = [{
-      id: 1,
-      quote: document.getElementById('test-quote').value.trim(),
-      author: document.getElementById('test-author').value.trim(),
-      role: document.getElementById('test-role').value.trim()
-    }];
-    saveData(currentData);
-    showSaveMsg('testimonial-save-msg');
-  });
-}
-
 // ─── CONTACT & SOCIAL TAB ─────────────────────────────────────────────────────
 function populateContactTab() {
   const d = getData();
@@ -338,6 +313,7 @@ function populateContactTab() {
   const social = d.social || DEFAULTS.social;
 
   document.getElementById('contact-email').value = contact.email || '';
+  document.getElementById('contact-loc').value = contact.location || '';
   document.getElementById('contact-msg-input').value = contact.message || '';
 
   document.getElementById('soc-linkedin').value = social.linkedin || '';
@@ -351,6 +327,7 @@ function populateContactTab() {
     const currentData = getData();
     currentData.contact = {
       email: document.getElementById('contact-email').value.trim(),
+      location: document.getElementById('contact-loc').value.trim(),
       message: document.getElementById('contact-msg-input').value.trim()
     };
     currentData.social = {
