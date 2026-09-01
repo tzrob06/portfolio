@@ -1,4 +1,113 @@
-// ─── DEFAULT PORTFOLIO DATA (DARK GREEN THEME) ───────────────────────────────
+// ─── THEME PRESETS ────────────────────────────────────────────────────────────
+const THEME_PRESETS = {
+  forest: {
+    name: "Forest Obsidian",
+    font: "'Inter', sans-serif",
+    radius: "12px",
+    colors: {
+      bg: "#0b120e",
+      bgSubtle: "#111c16",
+      bgCard: "#16251e",
+      bgCardAlt: "#1c2f26",
+      border: "#263d31",
+      borderFocus: "#4ade80",
+      text: "#ecf4ee",
+      textMid: "#a3c2b0",
+      textMuted: "#708e7d",
+      accent: "#52b788",
+      accentBright: "#4ade80",
+      accentDark: "#2d6a4f",
+      accentGlow: "rgba(82, 183, 136, 0.18)",
+      accentBadge: "rgba(82, 183, 136, 0.15)"
+    }
+  },
+  charcoal: {
+    name: "Midnight Charcoal",
+    font: "'Inter', sans-serif",
+    radius: "10px",
+    colors: {
+      bg: "#0d1117",
+      bgSubtle: "#161b22",
+      bgCard: "#21262d",
+      bgCardAlt: "#282e36",
+      border: "#30363d",
+      borderFocus: "#38bdf8",
+      text: "#f0f6fc",
+      textMid: "#c9d1d9",
+      textMuted: "#8b949e",
+      accent: "#38bdf8",
+      accentBright: "#7dd3fc",
+      accentDark: "#0369a1",
+      accentGlow: "rgba(56, 189, 248, 0.2)",
+      accentBadge: "rgba(56, 189, 248, 0.15)"
+    }
+  },
+  sageLight: {
+    name: "Sage & Linen (Light)",
+    font: "'Inter', sans-serif",
+    radius: "12px",
+    colors: {
+      bg: "#f6f8f5",
+      bgSubtle: "#edf1eb",
+      bgCard: "#ffffff",
+      bgCardAlt: "#e2e8e0",
+      border: "#d0dbcd",
+      borderFocus: "#386641",
+      text: "#1a241b",
+      textMid: "#405443",
+      textMuted: "#718573",
+      accent: "#386641",
+      accentBright: "#2d5234",
+      accentDark: "#1e3723",
+      accentGlow: "rgba(56, 102, 65, 0.15)",
+      accentBadge: "rgba(56, 102, 65, 0.12)"
+    }
+  },
+  indigo: {
+    name: "Deep Cosmos",
+    font: "'Inter', sans-serif",
+    radius: "14px",
+    colors: {
+      bg: "#0a0c14",
+      bgSubtle: "#101422",
+      bgCard: "#171c30",
+      bgCardAlt: "#1f2640",
+      border: "#283254",
+      borderFocus: "#818cf8",
+      text: "#f1f5f9",
+      textMid: "#cbd5e1",
+      textMuted: "#64748b",
+      accent: "#818cf8",
+      accentBright: "#a5b4fc",
+      accentDark: "#4338ca",
+      accentGlow: "rgba(129, 140, 248, 0.2)",
+      accentBadge: "rgba(129, 140, 248, 0.15)"
+    }
+  },
+  amber: {
+    name: "Warm Espresso",
+    font: "'Inter', sans-serif",
+    radius: "10px",
+    colors: {
+      bg: "#120e0b",
+      bgSubtle: "#1c1612",
+      bgCard: "#271f1a",
+      bgCardAlt: "#342a23",
+      border: "#3d3027",
+      borderFocus: "#f59e0b",
+      text: "#faf5ef",
+      textMid: "#d8c7b8",
+      textMuted: "#8e7d70",
+      accent: "#f59e0b",
+      accentBright: "#fbbf24",
+      accentDark: "#b45309",
+      accentGlow: "rgba(245, 158, 11, 0.2)",
+      accentBadge: "rgba(245, 158, 11, 0.15)"
+    }
+  }
+};
+
+// ─── DEFAULT PORTFOLIO DATA ───────────────────────────────────────────────────
 const DEFAULTS = {
   profile: {
     name: "Your Name",
@@ -11,6 +120,12 @@ const DEFAULTS = {
     school: "Your University",
     program: "Your Field of Study",
     availability: "Open to internships & collaborations"
+  },
+  theme: {
+    preset: "forest",
+    font: "'Inter', sans-serif",
+    radius: "12px",
+    colors: THEME_PRESETS.forest.colors
   },
   projects: [
     { id: 1, title: "Research & Analysis Initiative", year: "2024", description: "A comprehensive project exploring emerging trends in sustainability and human-centered design. Synthesized findings into an actionable report and presentation.", category: "Research", link: "#", image: "" },
@@ -30,11 +145,41 @@ const DEFAULTS = {
   contact: { email: "you@email.com", location: "Your City", message: "Have a project in mind, an internship opportunity, or just want to say hi? My inbox is always open." }
 };
 
+// ─── APPLY THEME VARIABLES ────────────────────────────────────────────────────
+function applyTheme(themeConfig) {
+  const root = document.documentElement;
+  const theme = themeConfig || DEFAULTS.theme;
+  const c = theme.colors || (THEME_PRESETS[theme.preset] ? THEME_PRESETS[theme.preset].colors : THEME_PRESETS.forest.colors);
+
+  if (theme.font) root.style.setProperty('--font-family', theme.font);
+  if (theme.radius) root.style.setProperty('--radius', theme.radius);
+
+  if (c) {
+    if (c.bg) root.style.setProperty('--bg', c.bg);
+    if (c.bgSubtle) root.style.setProperty('--bg-subtle', c.bgSubtle);
+    if (c.bgCard) root.style.setProperty('--bg-card', c.bgCard);
+    if (c.bgCardAlt) root.style.setProperty('--bg-card-alt', c.bgCardAlt);
+    if (c.border) root.style.setProperty('--border', c.border);
+    if (c.borderFocus) root.style.setProperty('--border-focus', c.borderFocus);
+    if (c.text) root.style.setProperty('--text', c.text);
+    if (c.textMid) root.style.setProperty('--text-mid', c.textMid);
+    if (c.textMuted) root.style.setProperty('--text-muted', c.textMuted);
+    if (c.accent) root.style.setProperty('--green', c.accent);
+    if (c.accentBright) root.style.setProperty('--green-bright', c.accentBright);
+    if (c.accentDark) root.style.setProperty('--green-dark', c.accentDark);
+    if (c.accentGlow) root.style.setProperty('--green-glow', c.accentGlow);
+    if (c.accentBadge) root.style.setProperty('--green-badge', c.accentBadge);
+  }
+}
+
 // ─── LOAD DATA FROM LOCALSTORAGE ─────────────────────────────────────────────
 function getData() {
   try {
     const stored = localStorage.getItem('portfolio_data');
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return Object.assign({}, DEFAULTS, parsed);
+    }
   } catch(e) {}
   return DEFAULTS;
 }
@@ -42,6 +187,8 @@ function getData() {
 // ─── RENDER PORTFOLIO ─────────────────────────────────────────────────────────
 function render() {
   const d = getData();
+  applyTheme(d.theme);
+
   const p = d.profile || DEFAULTS.profile;
 
   // Navbar monogram
@@ -196,7 +343,7 @@ function initNavbar() {
   }
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
+// ─── INITIAL RENDER ───────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   render();
   initNavbar();

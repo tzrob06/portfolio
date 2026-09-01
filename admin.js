@@ -1,4 +1,4 @@
-// ─── ADMIN AUTHENTICATION & MANAGEMENT (DARK GREEN THEME) ─────────────────────────
+// ─── ADMIN AUTHENTICATION & MANAGEMENT ──────────────────────────────────────────
 
 const DEFAULT_PASSWORD = 'admin123';
 
@@ -31,6 +31,12 @@ function saveData(data) {
 document.addEventListener('DOMContentLoaded', () => {
   const loginView = document.getElementById('login-view');
   const adminView = document.getElementById('admin-view');
+
+  // Apply current theme to admin panel too!
+  const d = getData();
+  if (typeof applyTheme === 'function') {
+    applyTheme(d.theme);
+  }
 
   if (isAuthenticated()) {
     loginView.style.display = 'none';
@@ -65,6 +71,7 @@ function loadAdminDashboard() {
   populateProjectsTab();
   populateSkillsTab();
   populateContactTab();
+  populateThemeTab();
   setupSettingsTab();
 
   document.getElementById('logout-btn').addEventListener('click', logout);
@@ -88,7 +95,7 @@ function setupTabs() {
   });
 }
 
-// ─── PROFILE TAB ──────────────────────────────────────────────────────────────
+// ─── PROFILE TAB & IMAGE UPLOAD ───────────────────────────────────────────────
 function populateProfileTab() {
   const d = getData();
   const p = d.profile || DEFAULTS.profile;
@@ -105,6 +112,35 @@ function populateProfileTab() {
   document.getElementById('prof-location').value = p.location || '';
   document.getElementById('prof-photo').value = p.photo || '';
   document.getElementById('prof-bio').value = p.bio || '';
+
+  updatePhotoThumb('prof-photo-thumb', 'prof-photo-remove', p.photo);
+
+  // Handle URL input change
+  const photoInput = document.getElementById('prof-photo');
+  photoInput.addEventListener('input', () => {
+    updatePhotoThumb('prof-photo-thumb', 'prof-photo-remove', photoInput.value.trim());
+  });
+
+  // Handle File upload
+  const fileInput = document.getElementById('prof-photo-file');
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target.result;
+      photoInput.value = base64;
+      updatePhotoThumb('prof-photo-thumb', 'prof-photo-remove', base64);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Handle Remove Photo button
+  document.getElementById('prof-photo-remove').addEventListener('click', () => {
+    photoInput.value = '';
+    fileInput.value = '';
+    updatePhotoThumb('prof-photo-thumb', 'prof-photo-remove', '');
+  });
 
   const form = document.getElementById('profile-form');
   form.addEventListener('submit', (e) => {
@@ -128,12 +164,53 @@ function populateProfileTab() {
   });
 }
 
-// ─── PROJECTS TAB ─────────────────────────────────────────────────────────────
+function updatePhotoThumb(thumbId, removeBtnId, url) {
+  const thumb = document.getElementById(thumbId);
+  const removeBtn = document.getElementById(removeBtnId);
+  if (!thumb) return;
+
+  if (url && url.length > 0) {
+    thumb.style.backgroundImage = `url('${url}')`;
+    thumb.textContent = '';
+    if (removeBtn) removeBtn.style.display = 'inline-block';
+  } else {
+    thumb.style.backgroundImage = '';
+    thumb.textContent = 'No Image';
+    if (removeBtn) removeBtn.style.display = 'none';
+  }
+}
+
+// ─── PROJECTS TAB & IMAGE UPLOAD ──────────────────────────────────────────────
 function populateProjectsTab() {
   renderProjectsAdminList();
 
   document.getElementById('add-project-btn').addEventListener('click', () => {
     openProjectModal();
+  });
+
+  // Project Modal Image Upload handlers
+  const pmImageInput = document.getElementById('pm-image');
+  pmImageInput.addEventListener('input', () => {
+    updatePhotoThumb('pm-image-thumb', 'pm-image-remove', pmImageInput.value.trim());
+  });
+
+  const pmFileInput = document.getElementById('pm-image-file');
+  pmFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target.result;
+      pmImageInput.value = base64;
+      updatePhotoThumb('pm-image-thumb', 'pm-image-remove', base64);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('pm-image-remove').addEventListener('click', () => {
+    pmImageInput.value = '';
+    pmFileInput.value = '';
+    updatePhotoThumb('pm-image-thumb', 'pm-image-remove', '');
   });
 
   const form = document.getElementById('project-modal-form');
@@ -218,6 +295,7 @@ function openProjectModal(item = null) {
   document.getElementById('pm-image').value = item ? item.image : '';
   document.getElementById('pm-link').value = item ? item.link : '';
   document.getElementById('pm-desc').value = item ? item.description : '';
+  updatePhotoThumb('pm-image-thumb', 'pm-image-remove', item ? item.image : '');
   openModal('project-modal');
 }
 
@@ -341,6 +419,144 @@ function populateContactTab() {
   });
 }
 
+// ─── THEME & APPEARANCE TAB ───────────────────────────────────────────────────
+function populateThemeTab() {
+  const d = getData();
+  const theme = d.theme || DEFAULTS.theme;
+  const c = theme.colors || THEME_PRESETS.forest.colors;
+
+  // Render presets
+  const presetsContainer = document.getElementById('theme-presets-container');
+  presetsContainer.innerHTML = '';
+  Object.keys(THEME_PRESETS).forEach(key => {
+    const p = THEME_PRESETS[key];
+    const card = document.createElement('div');
+    card.className = `theme-preset-card ${theme.preset === key ? 'active' : ''}`;
+    card.innerHTML = `
+      <div class="preset-colors-row">
+        <span class="preset-color-dot" style="background:${p.colors.bg}"></span>
+        <span class="preset-color-dot" style="background:${p.colors.bgCard}"></span>
+        <span class="preset-color-dot" style="background:${p.colors.accent}"></span>
+        <span class="preset-color-dot" style="background:${p.colors.accentBright}"></span>
+      </div>
+      <div class="preset-name">${p.name}</div>
+    `;
+    card.addEventListener('click', () => {
+      selectThemePreset(key);
+    });
+    presetsContainer.appendChild(card);
+  });
+
+  // Set pickers values
+  setColorPicker('col-bg', 'hex-bg', c.bg || '#0b120e');
+  setColorPicker('col-card', 'hex-card', c.bgCard || '#16251e');
+  setColorPicker('col-accent', 'hex-accent', c.accent || '#52b788');
+  setColorPicker('col-bright', 'hex-bright', c.accentBright || '#4ade80');
+  setColorPicker('col-border', 'hex-border', c.border || '#263d31');
+  setColorPicker('col-text', 'hex-text', c.text || '#ecf4ee');
+
+  if (theme.font) document.getElementById('theme-font').value = theme.font;
+  if (theme.radius) document.getElementById('theme-radius').value = theme.radius;
+
+  // Custom Theme Form Submit
+  const form = document.getElementById('custom-theme-form');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const currentData = getData();
+    const bg = document.getElementById('col-bg').value;
+    const bgCard = document.getElementById('col-card').value;
+    const accent = document.getElementById('col-accent').value;
+    const accentBright = document.getElementById('col-bright').value;
+    const border = document.getElementById('col-border').value;
+    const text = document.getElementById('col-text').value;
+
+    currentData.theme = {
+      preset: 'custom',
+      font: document.getElementById('theme-font').value,
+      radius: document.getElementById('theme-radius').value,
+      colors: {
+        bg: bg,
+        bgSubtle: bgCard,
+        bgCard: bgCard,
+        bgCardAlt: bgCard,
+        border: border,
+        borderFocus: accentBright,
+        text: text,
+        textMid: text,
+        textMuted: border,
+        accent: accent,
+        accentBright: accentBright,
+        accentDark: accent,
+        accentGlow: hexToRgba(accent, 0.2),
+        accentBadge: hexToRgba(accent, 0.15)
+      }
+    };
+
+    saveData(currentData);
+    applyTheme(currentData.theme);
+    showSaveMsg('theme-save-msg');
+  });
+}
+
+function selectThemePreset(key) {
+  const p = THEME_PRESETS[key];
+  if (!p) return;
+
+  const currentData = getData();
+  currentData.theme = {
+    preset: key,
+    font: p.font,
+    radius: p.radius,
+    colors: p.colors
+  };
+
+  saveData(currentData);
+  applyTheme(currentData.theme);
+
+  // Update UI pickers
+  setColorPicker('col-bg', 'hex-bg', p.colors.bg);
+  setColorPicker('col-card', 'hex-card', p.colors.bgCard);
+  setColorPicker('col-accent', 'hex-accent', p.colors.accent);
+  setColorPicker('col-bright', 'hex-bright', p.colors.accentBright);
+  setColorPicker('col-border', 'hex-border', p.colors.border);
+  setColorPicker('col-text', 'hex-text', p.colors.text);
+
+  if (p.font) document.getElementById('theme-font').value = p.font;
+  if (p.radius) document.getElementById('theme-radius').value = p.radius;
+
+  // Update active state in cards
+  document.querySelectorAll('.theme-preset-card').forEach((el, idx) => {
+    el.classList.toggle('active', Object.keys(THEME_PRESETS)[idx] === key);
+  });
+
+  showSaveMsg('theme-save-msg');
+}
+
+function setColorPicker(inputId, hexId, value) {
+  const input = document.getElementById(inputId);
+  const hex = document.getElementById(hexId);
+  if (!input) return;
+  input.value = value;
+  if (hex) hex.textContent = value;
+
+  input.oninput = () => {
+    if (hex) hex.textContent = input.value;
+  };
+}
+
+function hexToRgba(hex, alpha) {
+  let c;
+  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+    c = hex.substring(1).split('');
+    if (c.length === 3) {
+      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+    }
+    c = '0x' + c.join('');
+    return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + `,${alpha})`;
+  }
+  return hex;
+}
+
 // ─── SETTINGS TAB ─────────────────────────────────────────────────────────────
 function setupSettingsTab() {
   // Password change
@@ -392,7 +608,7 @@ function setupSettingsTab() {
 
   // Reset to defaults
   document.getElementById('reset-defaults-btn').addEventListener('click', () => {
-    if (confirm('Are you sure you want to reset all data and password to defaults? This cannot be undone.')) {
+    if (confirm('Are you sure you want to reset all data, theme, and password to defaults? This cannot be undone.')) {
       localStorage.removeItem('portfolio_data');
       localStorage.removeItem('portfolio_password');
       alert('Reset complete.');

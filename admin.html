@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700&family=Playfair+Display:wght@600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
 </head>
 <body class="admin-page">
 
@@ -18,10 +18,10 @@
       <h1>Portfolio Admin</h1>
       <p>Enter your password to manage your site</p>
       <form id="login-form">
-        <input type="password" id="password-input" placeholder="Password (default: admin123)" autocomplete="current-password" required />
+        <input type="password" id="password-input" placeholder="Enter Password" autocomplete="current-password" required />
         <button type="submit">Sign In</button>
       </form>
-      <p id="login-error" class="login-error">Incorrect password. Default is admin123</p>
+      <p id="login-error" class="login-error">Incorrect password. Please try again.</p>
     </div>
   </div>
 
@@ -53,8 +53,12 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Contact & Social
         </button>
+        <button class="admin-tab" data-tab="theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"/></svg>
+          Theme & Colors
+        </button>
         <button class="admin-tab" data-tab="settings">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
           Settings & Data
         </button>
       </nav>
@@ -78,7 +82,7 @@
         <div class="admin-section-header">
           <div>
             <h2>Profile Settings</h2>
-            <p>Customize your student background, headline, and bio</p>
+            <p>Customize your identity, student background, photo, and bio</p>
           </div>
         </div>
         <form id="profile-form">
@@ -116,10 +120,24 @@
                 <label for="prof-location">Location</label>
                 <input type="text" id="prof-location" placeholder="e.g. New York, NY" />
               </div>
+
+              <!-- Profile Image Upload / URL -->
               <div class="form-group span-2">
-                <label for="prof-photo">Profile Photo URL (optional)</label>
-                <input type="url" id="prof-photo" placeholder="https://example.com/photo.jpg" />
+                <label>Profile Photo</label>
+                <div class="image-upload-wrap">
+                  <div class="image-preview-thumb" id="prof-photo-thumb">No Image</div>
+                  <div class="image-upload-controls">
+                    <label class="file-btn">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      Upload Image from Computer
+                      <input type="file" id="prof-photo-file" accept="image/*" style="display: none;" />
+                    </label>
+                    <input type="text" id="prof-photo" placeholder="Or paste image URL (https://...)" />
+                    <button type="button" id="prof-photo-remove" class="btn-ghost" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; align-self: flex-start; border-radius: 6px; display: none;">Remove Photo</button>
+                  </div>
+                </div>
               </div>
+
               <div class="form-group span-2">
                 <label for="prof-bio">About Me Bio</label>
                 <textarea id="prof-bio" rows="4"></textarea>
@@ -170,7 +188,7 @@
         <div class="admin-section-header">
           <div>
             <h2>Contact & Social Links</h2>
-            <p>Manage how visitors contact you and find your profile links</p>
+            <p>Manage how visitors contact you and find your profiles</p>
           </div>
         </div>
         <form id="contact-form">
@@ -225,7 +243,109 @@
         </form>
       </section>
 
-      <!-- TAB 5: SETTINGS -->
+      <!-- TAB 5: THEME CUSTOMIZATION -->
+      <section id="tab-theme" class="admin-tab-content">
+        <div class="admin-section-header">
+          <div>
+            <h2>Theme & Appearance</h2>
+            <p>Select a pre-designed palette or customize your exact brand colors & typography</p>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3>Preset Color Themes</h3>
+            <p>Click any preset to instantly apply and preview</p>
+          </div>
+          <div class="theme-presets-grid" id="theme-presets-container">
+            <!-- Rendered by admin.js -->
+          </div>
+        </div>
+
+        <form id="custom-theme-form">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>Custom Color Palette</h3>
+              <p>Fine-tune individual colors</p>
+            </div>
+            <div class="color-pickers-grid">
+              <div class="color-picker-item">
+                <span class="color-picker-label">Background Color</span>
+                <div class="color-input-wrap">
+                  <input type="color" id="col-bg" />
+                  <span class="color-hex-text" id="hex-bg">#0b120e</span>
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <span class="color-picker-label">Card Surface</span>
+                <div class="color-input-wrap">
+                  <input type="color" id="col-card" />
+                  <span class="color-hex-text" id="hex-card">#16251e</span>
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <span class="color-picker-label">Primary Accent</span>
+                <div class="color-input-wrap">
+                  <input type="color" id="col-accent" />
+                  <span class="color-hex-text" id="hex-accent">#52b788</span>
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <span class="color-picker-label">Bright Accent / Glow</span>
+                <div class="color-input-wrap">
+                  <input type="color" id="col-bright" />
+                  <span class="color-hex-text" id="hex-bright">#4ade80</span>
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <span class="color-picker-label">Border Color</span>
+                <div class="color-input-wrap">
+                  <input type="color" id="col-border" />
+                  <span class="color-hex-text" id="hex-border">#263d31</span>
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <span class="color-picker-label">Text Color</span>
+                <div class="color-input-wrap">
+                  <input type="color" id="col-text" />
+                  <span class="color-hex-text" id="hex-text">#ecf4ee</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>Typography & Shape</h3>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="theme-font">Font Family</label>
+                <select id="theme-font">
+                  <option value="'Inter', sans-serif">Inter (Modern Sans)</option>
+                  <option value="'Space Grotesk', sans-serif">Space Grotesk (Tech Minimal)</option>
+                  <option value="'Outfit', sans-serif">Outfit (Clean & Friendly)</option>
+                  <option value="'Playfair Display', serif">Playfair Display (Editorial Serif)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="theme-radius">Corner Roundness</label>
+                <select id="theme-radius">
+                  <option value="4px">Sharp (4px)</option>
+                  <option value="12px">Rounded (12px)</option>
+                  <option value="20px">Soft & Pill (20px)</option>
+                </select>
+              </div>
+            </div>
+            <div class="save-bar">
+              <button type="submit" class="btn btn-green">Save Theme Settings</button>
+              <span id="theme-save-msg" class="save-msg">✓ Theme saved & applied!</span>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- TAB 6: SETTINGS -->
       <section id="tab-settings" class="admin-tab-content">
         <div class="admin-section-header">
           <div>
@@ -304,10 +424,24 @@
             <label for="pm-category">Category / Tag</label>
             <input type="text" id="pm-category" placeholder="e.g. Research, Case Study, Leadership" />
           </div>
+
+          <!-- Project Cover Image Upload / URL -->
           <div class="form-group span-2">
-            <label for="pm-image">Cover Image URL (optional)</label>
-            <input type="url" id="pm-image" placeholder="https://example.com/image.jpg" />
+            <label>Project Cover Image</label>
+            <div class="image-upload-wrap">
+              <div class="image-preview-thumb" id="pm-image-thumb">No Image</div>
+              <div class="image-upload-controls">
+                <label class="file-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Upload Image from Computer
+                  <input type="file" id="pm-image-file" accept="image/*" style="display: none;" />
+                </label>
+                <input type="text" id="pm-image" placeholder="Or paste image URL (https://...)" />
+                <button type="button" id="pm-image-remove" class="btn-ghost" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; align-self: flex-start; border-radius: 6px; display: none;">Remove Image</button>
+              </div>
+            </div>
           </div>
+
           <div class="form-group span-2">
             <label for="pm-link">Project / Case Study Link (optional)</label>
             <input type="text" id="pm-link" placeholder="https://... or #" />
