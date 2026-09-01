@@ -560,16 +560,22 @@
 
         <div class="admin-card">
           <div class="admin-card-header">
-            <h3>Backup &amp; Restore</h3>
-            <p>Export your portfolio data to JSON or import an existing backup</p>
+            <h3>Sync Across Devices &amp; Mobile</h3>
+            <p>Easily transfer your settings to your phone or backup your site data</p>
           </div>
-          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
-            <button id="export-json-btn" class="btn btn-outline">Export JSON Backup</button>
-            <label class="btn btn-outline" style="cursor: pointer;">
-              Import JSON Backup
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+            <button type="button" id="copy-sync-link-btn" class="btn btn-green btn-sm">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Copy Mobile Sync Link
+            </button>
+            <button type="button" id="copy-json-btn" class="btn btn-outline btn-sm">Copy Data JSON</button>
+            <button type="button" id="export-json-btn" class="btn btn-outline btn-sm">Download data.json</button>
+            <label class="btn btn-outline btn-sm" style="cursor: pointer;">
+              Import data.json / Backup
               <input type="file" id="import-json-input" accept=".json" style="display: none;" />
             </label>
           </div>
+          <p id="sync-link-msg" class="save-msg" style="color:var(--green-bright); font-size:0.82rem;">✓ Link copied to clipboard! Open it on your phone to transfer all your settings &amp; images instantly.</p>
         </div>
 
         <div class="admin-card">

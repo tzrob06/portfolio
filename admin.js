@@ -738,12 +738,42 @@ function setupSettingsTab() {
     passForm.reset();
   });
 
+  // Copy Mobile Sync Link
+  const syncBtn = document.getElementById('copy-sync-link-btn');
+  if (syncBtn) {
+    syncBtn.addEventListener('click', () => {
+      const data = getData();
+      const currentUrl = window.location.href.split('#')[0];
+      const indexUrl = currentUrl.replace(/admin\.html$/, 'index.html');
+      const syncUrl = indexUrl + '#sync=' + encodeURIComponent(JSON.stringify(data));
+      
+      navigator.clipboard.writeText(syncUrl).then(() => {
+        showSaveMsg('sync-link-msg');
+      }).catch(() => {
+        prompt('Copy this link and open it on your phone:', syncUrl);
+      });
+    });
+  }
+
+  // Copy Data JSON
+  const copyJsonBtn = document.getElementById('copy-json-btn');
+  if (copyJsonBtn) {
+    copyJsonBtn.addEventListener('click', () => {
+      const jsonStr = JSON.stringify(getData(), null, 2);
+      navigator.clipboard.writeText(jsonStr).then(() => {
+        alert('✓ Portfolio JSON copied to clipboard!');
+      }).catch(() => {
+        prompt('Copy your portfolio JSON data:', jsonStr);
+      });
+    });
+  }
+
   // Export JSON
   document.getElementById('export-json-btn').addEventListener('click', () => {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(getData(), null, 2));
     const a = document.createElement('a');
     a.setAttribute('href', dataStr);
-    a.setAttribute('download', 'portfolio_backup.json');
+    a.setAttribute('download', 'data.json');
     document.body.appendChild(a);
     a.click();
     a.remove();

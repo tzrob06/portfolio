@@ -201,25 +201,58 @@ function applyTheme(themeConfig) {
   }
 }
 
-// ─── LOAD DATA FROM LOCALSTORAGE ─────────────────────────────────────────────
+// ─── LOAD DATA FROM LOCALSTORAGE OR URL / DATA.JSON ───────────────────────────
 function getData() {
   try {
+    // 1. Check for URL sync parameter (e.g. sent from desktop to mobile)
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#sync=')) {
+      const raw = decodeURIComponent(hash.substring(6));
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        localStorage.setItem('portfolio_data', JSON.stringify(parsed));
+        history.replaceState(null, '', window.location.pathname);
+        return mergeDefaults(parsed);
+      }
+    }
+
+    // 2. Check localStorage
     const stored = localStorage.getItem('portfolio_data');
     if (stored) {
       const parsed = JSON.parse(stored);
-      return {
-        ...DEFAULTS,
-        ...parsed,
-        profile: { ...DEFAULTS.profile, ...(parsed.profile || {}) },
-        headings: { ...DEFAULTS.headings, ...(parsed.headings || {}) },
-        theme: { ...DEFAULTS.theme, ...(parsed.theme || {}) },
-        social: { ...DEFAULTS.social, ...(parsed.social || {}) },
-        contact: { ...DEFAULTS.contact, ...(parsed.contact || {}) },
-        inbox: parsed.inbox || []
-      };
+      return mergeDefaults(parsed);
     }
   } catch(e) {}
   return DEFAULTS;
+}
+
+function mergeDefaults(parsed) {
+  return {
+    ...DEFAULTS,
+    ...parsed,
+    profile: { ...DEFAULTS.profile, ...(parsed.profile || {}) },
+    headings: { ...DEFAULTS.headings, ...(parsed.headings || {}) },
+    theme: { ...DEFAULTS.theme, ...(parsed.theme || {}) },
+    social: { ...DEFAULTS.social, ...(parsed.social || {}) },
+    contact: { ...DEFAULTS.contact, ...(parsed.contact || {}) },
+    inbox: parsed.inbox || []
+  };
+}
+
+async function syncRemoteData() {
+  // If localStorage is not present (e.g. first time opening on mobile), fetch data.json
+  if (!localStorage.getItem('portfolio_data')) {
+    try {
+      const res = await fetch('data.json?t=' + Date.now());
+      if (res.ok) {
+        const json = await res.json();
+        if (json && typeof json === 'object') {
+          localStorage.setItem('portfolio_data', JSON.stringify(json));
+          render();
+        }
+      }
+    } catch(e) {}
+  }
 }
 
 // ─── RENDER PORTFOLIO ─────────────────────────────────────────────────────────
@@ -523,4 +556,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initScrollReveal();
   initContactForm();
+  syncRemoteData();
 });

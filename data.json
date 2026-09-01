@@ -1,0 +1,141 @@
+{
+  "profile": {
+    "name": "Your Name",
+    "monogram": "YN",
+    "tagline": "Student & Creative Thinker",
+    "bio": "I'm a student passionate about design, problem-solving, and building things that matter. Currently exploring opportunities to apply my skills in the real world through internships and collaborative projects.",
+    "photo": "",
+    "location": "Your City",
+    "email": "you@email.com",
+    "school": "Your University",
+    "program": "Your Field of Study",
+    "availability": "Open to internships & collaborations"
+  },
+  "headings": {
+    "siteTitle": "Portfolio",
+    "navAbout": "About",
+    "navProjects": "Projects",
+    "navSkills": "Skills",
+    "navContact": "Contact",
+    "heroBtnProjects": "View My Work",
+    "heroBtnContact": "Get In Touch",
+    "aboutEyebrow": "About",
+    "aboutPrefix": "Hello, I'm",
+    "aboutBtn": "Let's Connect",
+    "projectsEyebrow": "Work",
+    "projectsTitlePrefix": "Selected",
+    "projectsTitleAccent": "Projects",
+    "skillsEyebrow": "Capabilities",
+    "skillsTitlePrefix": "Skills &",
+    "skillsTitleAccent": "Strengths",
+    "contactEyebrow": "Contact",
+    "contactTitlePrefix": "Get In",
+    "contactTitleAccent": "Touch",
+    "contactBtn": "Send Message"
+  },
+  "theme": {
+    "preset": "forest",
+    "font": "'Inter', sans-serif",
+    "radius": "12px",
+    "colors": {
+      "bg": "#0b120e",
+      "bgSubtle": "#111c16",
+      "bgCard": "#16251e",
+      "bgCardAlt": "#1c2f26",
+      "border": "#263d31",
+      "borderFocus": "#4ade80",
+      "text": "#ecf4ee",
+      "textMid": "#a3c2b0",
+      "textMuted": "#708e7d",
+      "accent": "#52b788",
+      "accentBright": "#4ade80",
+      "accentDark": "#2d6a4f",
+      "accentGlow": "rgba(82, 183, 136, 0.18)",
+      "accentBadge": "rgba(82, 183, 136, 0.15)"
+    }
+  },
+  "projects": [
+    {
+      "id": 1,
+      "title": "Research & Analysis Initiative",
+      "year": "2024",
+      "description": "A comprehensive project exploring emerging trends in sustainability and human-centered design. Synthesized findings into an actionable report and presentation.",
+      "category": "Research",
+      "link": "#",
+      "image": ""
+    },
+    {
+      "id": 2,
+      "title": "Collaborative Design Sprint",
+      "year": "2024",
+      "description": "Worked in a cross-functional student team to design, test, and prototype a user-centric solution for a real-world brief within 72 hours.",
+      "category": "Teamwork",
+      "link": "#",
+      "image": ""
+    },
+    {
+      "id": 3,
+      "title": "Independent Study Project",
+      "year": "2023",
+      "description": "Self-directed capstone project exploring visual communication and digital storytelling. Showcased at the university department exhibition.",
+      "category": "Creative",
+      "link": "#",
+      "image": ""
+    },
+    {
+      "id": 4,
+      "title": "Community Volunteer Work",
+      "year": "2023",
+      "description": "Coordinated outreach and logistics for a community initiative, managing peers and delivering on-the-ground support.",
+      "category": "Leadership",
+      "link": "#",
+      "image": ""
+    }
+  ],
+  "skills": [
+    {
+      "id": 1,
+      "title": "Research & Synthesis",
+      "description": "Distilling complex findings, data, and literature into clear, actionable takeaways."
+    },
+    {
+      "id": 2,
+      "title": "Communication",
+      "description": "Strong written and presentation skills across academic, professional, and creative formats."
+    },
+    {
+      "id": 3,
+      "title": "Project Coordination",
+      "description": "Experienced in managing milestones, task allocation, and team deadlines smoothly."
+    },
+    {
+      "id": 4,
+      "title": "Creative Problem-Solving",
+      "description": "Approaching challenges with curiosity, iterative testing, and multidisciplinary ideas."
+    },
+    {
+      "id": 5,
+      "title": "Collaboration & Teamwork",
+      "description": "Thrive in diverse group settings and enjoy bringing out the best in team members."
+    },
+    {
+      "id": 6,
+      "title": "Adaptability & Growth",
+      "description": "Quick to learn new tools, technologies, and methodologies with high enthusiasm."
+    }
+  ],
+  "social": {
+    "linkedin": "#",
+    "github": "#",
+    "twitter": "",
+    "instagram": ""
+  },
+  "contact": {
+    "email": "you@email.com",
+    "location": "Your City",
+    "message": "Have a project in mind, an internship opportunity, or just want to say hi? My inbox is always open.",
+    "formspreeUrl": "",
+    "web3formsKey": ""
+  },
+  "inbox": []
+}
