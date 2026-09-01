@@ -346,7 +346,7 @@ function renderSkills(skills) {
 // ─── CONTACT FORM HANDLER WITH EMAIL DELIVERY ─────────────────────────────────
 function initContactForm() {
   const form = document.getElementById('contactForm');
-  const success = document.getElementById('formSuccess');
+  const statusBanner = document.getElementById('formSuccess');
   if (!form) return;
 
   form.addEventListener('submit', async (e) => {
@@ -380,50 +380,94 @@ function initContactForm() {
     });
     localStorage.setItem('portfolio_data', JSON.stringify(data));
 
-    // 2. Deliver to real inbox
+    // 2. Deliver to real email inbox
     try {
-      if (formspreeUrl && formspreeUrl.trim() !== '') {
+      if (web3formsKey && web3formsKey.trim() !== '') {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            access_key: web3formsKey.trim(),
+            name: name,
+            email: email,
+            subject: subject || `Portfolio message from ${name}`,
+            message: message,
+            from_name: name
+          })
+        });
+
+        const json = await response.json();
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+
+        if (response.status === 200 && json.success) {
+          if (statusBanner) {
+            statusBanner.style.color = 'var(--green-bright)';
+            statusBanner.style.borderColor = 'var(--border)';
+            statusBanner.textContent = '✓ Message sent! Delivered directly to inbox.';
+            statusBanner.classList.add('visible');
+            form.reset();
+            setTimeout(() => statusBanner.classList.remove('visible'), 6000);
+          }
+        } else {
+          // If Web3Forms returned an error message
+          if (statusBanner) {
+            statusBanner.style.color = '#f87171';
+            statusBanner.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            statusBanner.textContent = json.message || 'Error submitting form. Please verify your Web3Forms Access Key.';
+            statusBanner.classList.add('visible');
+            setTimeout(() => statusBanner.classList.remove('visible'), 8000);
+          }
+        }
+      } else if (formspreeUrl && formspreeUrl.trim() !== '') {
         const response = await fetch(formspreeUrl.trim(), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body: JSON.stringify({ name, email, subject, message })
         });
-        if (!response.ok) throw new Error('Formspree response not ok');
-      } else if (web3formsKey && web3formsKey.trim() !== '') {
-        const response = await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({
-            access_key: web3formsKey.trim(),
-            name, email,
-            subject: subject || `New message from ${name} on Portfolio`,
-            message
-          })
-        });
-        if (!response.ok) throw new Error('Web3Forms response not ok');
-      } else {
-        // Fallback: Opens email client with pre-filled details to ensure message reaches you
-        window.open(`mailto:${recipientEmail}?subject=${encodeURIComponent(subject || 'Portfolio Inquiry')}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`);
-      }
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
 
-      btn.disabled = false;
-      btn.innerHTML = origHtml;
-      if (success) {
-        success.textContent = '✓ Message sent! Thank you for reaching out.';
-        success.classList.add('visible');
-        form.reset();
-        setTimeout(() => success.classList.remove('visible'), 5000);
+        if (response.ok) {
+          if (statusBanner) {
+            statusBanner.style.color = 'var(--green-bright)';
+            statusBanner.style.borderColor = 'var(--border)';
+            statusBanner.textContent = '✓ Message sent! Delivered to inbox.';
+            statusBanner.classList.add('visible');
+            form.reset();
+            setTimeout(() => statusBanner.classList.remove('visible'), 6000);
+          }
+        } else {
+          throw new Error('Formspree response not ok');
+        }
+      } else {
+        // Fallback: Opens email client with pre-filled details
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+        window.open(`mailto:${recipientEmail}?subject=${encodeURIComponent(subject || 'Portfolio Inquiry')}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`);
+        if (statusBanner) {
+          statusBanner.style.color = 'var(--green-bright)';
+          statusBanner.style.borderColor = 'var(--border)';
+          statusBanner.textContent = '✓ Message opened in email client & archived in Admin Inbox.';
+          statusBanner.classList.add('visible');
+          form.reset();
+          setTimeout(() => statusBanner.classList.remove('visible'), 6000);
+        }
       }
     } catch (err) {
       btn.disabled = false;
       btn.innerHTML = origHtml;
-      // If network/endpoint error, fallback to mailto
       window.location.href = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject || 'Portfolio Inquiry')}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
-      if (success) {
-        success.textContent = '✓ Message sent! Thank you for reaching out.';
-        success.classList.add('visible');
+      if (statusBanner) {
+        statusBanner.style.color = 'var(--green-bright)';
+        statusBanner.style.borderColor = 'var(--border)';
+        statusBanner.textContent = '✓ Message archived in Admin Inbox.';
+        statusBanner.classList.add('visible');
         form.reset();
-        setTimeout(() => success.classList.remove('visible'), 5000);
+        setTimeout(() => statusBanner.classList.remove('visible'), 6000);
       }
     }
   });
