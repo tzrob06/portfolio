@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio Admin</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="admin-page">
+
+  <!-- ─── LOGIN VIEW ─── -->
+  <div id="login-view" class="login-wrap">
+    <div class="login-box">
+      <div class="login-logo">YN</div>
+      <h1>Portfolio Admin</h1>
+      <p>Enter your password to manage your site</p>
+      <form id="login-form">
+        <input type="password" id="password-input" placeholder="Password (default: admin123)" autocomplete="current-password" required />
+        <button type="submit">Sign In</button>
+      </form>
+      <p id="login-error" class="login-error">Incorrect password. Default is admin123</p>
+    </div>
+  </div>
+
+  <!-- ─── ADMIN DASHBOARD ─── -->
+  <div id="admin-view" class="admin-layout" style="display: none;">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <div class="admin-brand-logo" id="sidebar-logo">YN</div>
+        <div class="admin-brand-name">
+          <span id="sidebar-name">Your Name</span>
+          <small>Student Portfolio</small>
+        </div>
+      </div>
+      <nav class="admin-nav">
+        <button class="admin-tab active" data-tab="profile">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </button>
+        <button class="admin-tab" data-tab="projects">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          Projects
+        </button>
+        <button class="admin-tab" data-tab="skills">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Skills
+        </button>
+        <button class="admin-tab" data-tab="testimonial">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Testimonial
+        </button>
+        <button class="admin-tab" data-tab="contact">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Contact & Social
+        </button>
+        <button class="admin-tab" data-tab="settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Settings & Data
+        </button>
+      </nav>
+      <div class="admin-sidebar-footer">
+        <a href="index.html" target="_blank" class="admin-footer-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          View Live Site
+        </a>
+        <button id="logout-btn" class="admin-footer-link danger">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      
+      <!-- TAB 1: PROFILE -->
+      <section id="tab-profile" class="admin-tab-content active">
+        <div class="admin-section-header">
+          <div>
+            <h2>Profile Settings</h2>
+            <p>Customize your identity, student background, and bio</p>
+          </div>
+        </div>
+        <form id="profile-form">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>Basic Information</h3>
+              <p>Key information displayed in your hero and about sections</p>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="prof-name">Full Name</label>
+                <input type="text" id="prof-name" required />
+              </div>
+              <div class="form-group">
+                <label for="prof-monogram">Initials / Monogram</label>
+                <input type="text" id="prof-monogram" maxlength="3" />
+              </div>
+              <div class="form-group span-2">
+                <label for="prof-tagline">Headline / Tagline</label>
+                <input type="text" id="prof-tagline" placeholder="e.g. Student & Creative Thinker" required />
+              </div>
+              <div class="form-group">
+                <label for="prof-school">School / University</label>
+                <input type="text" id="prof-school" placeholder="e.g. State University" />
+              </div>
+              <div class="form-group">
+                <label for="prof-program">Program / Major</label>
+                <input type="text" id="prof-program" placeholder="e.g. B.S. Communications & Design" />
+              </div>
+              <div class="form-group">
+                <label for="prof-availability">Availability Status</label>
+                <input type="text" id="prof-availability" placeholder="e.g. Open to internships & collaborations" />
+              </div>
+              <div class="form-group">
+                <label for="prof-location">Location</label>
+                <input type="text" id="prof-location" placeholder="e.g. New York, NY" />
+              </div>
+              <div class="form-group span-2">
+                <label for="prof-photo">Profile Photo URL (optional)</label>
+                <input type="url" id="prof-photo" placeholder="https://example.com/photo.jpg" />
+              </div>
+              <div class="form-group span-2">
+                <label for="prof-bio">About Me Bio</label>
+                <textarea id="prof-bio" rows="4"></textarea>
+              </div>
+            </div>
+            <div class="save-bar">
+              <button type="submit" class="btn btn-sage">Save Profile</button>
+              <span id="profile-save-msg" class="save-msg">✓ Saved successfully!</span>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- TAB 2: PROJECTS -->
+      <section id="tab-projects" class="admin-tab-content">
+        <div class="admin-section-header">
+          <div>
+            <h2>Projects & Work</h2>
+            <p>Showcase your coursework, personal projects, or volunteer work</p>
+          </div>
+          <button id="add-project-btn" class="btn btn-sage btn-sm">+ Add Project</button>
+        </div>
+        <div class="admin-card">
+          <div id="projects-list" class="item-list">
+            <!-- Dynamic project list -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: SKILLS -->
+      <section id="tab-skills" class="admin-tab-content">
+        <div class="admin-section-header">
+          <div>
+            <h2>Skills & Capabilities</h2>
+            <p>Highlight your core strengths, soft skills, and toolset</p>
+          </div>
+          <button id="add-skill-btn" class="btn btn-sage btn-sm">+ Add Skill</button>
+        </div>
+        <div class="admin-card">
+          <div id="skills-list" class="item-list">
+            <!-- Dynamic skills list -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: TESTIMONIAL -->
+      <section id="tab-testimonial" class="admin-tab-content">
+        <div class="admin-section-header">
+          <div>
+            <h2>Testimonial / Endorsement</h2>
+            <p>Quote from a professor, mentor, advisor, or teammate</p>
+          </div>
+        </div>
+        <form id="testimonial-form">
+          <div class="admin-card">
+            <div class="form-grid cols-1">
+              <div class="form-group">
+                <label for="test-quote">Quote</label>
+                <textarea id="test-quote" rows="4" placeholder="Their quote about your work ethic, creativity, or diligence..."></textarea>
+              </div>
+              <div class="form-group">
+                <label for="test-author">Author Name</label>
+                <input type="text" id="test-author" placeholder="e.g. Dr. Sarah Jenkins" />
+              </div>
+              <div class="form-group">
+                <label for="test-role">Author Title / Relation</label>
+                <input type="text" id="test-role" placeholder="e.g. Professor of Design, University" />
+              </div>
+            </div>
+            <div class="save-bar">
+              <button type="submit" class="btn btn-sage">Save Testimonial</button>
+              <span id="testimonial-save-msg" class="save-msg">✓ Saved successfully!</span>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- TAB 5: CONTACT & SOCIAL -->
+      <section id="tab-contact" class="admin-tab-content">
+        <div class="admin-section-header">
+          <div>
+            <h2>Contact & Social Links</h2>
+            <p>Manage how visitors reach out and find your profiles</p>
+          </div>
+        </div>
+        <form id="contact-form">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>Contact Details</h3>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="contact-email">Contact Email</label>
+                <input type="email" id="contact-email" required />
+              </div>
+              <div class="form-group span-2">
+                <label for="contact-msg-input">Call-to-Action Message</label>
+                <input type="text" id="contact-msg-input" placeholder="Always open to interesting conversations..." />
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>Social & Platform Links</h3>
+              <p>Leave empty if you don't want a button to show</p>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="soc-linkedin">LinkedIn URL</label>
+                <input type="url" id="soc-linkedin" placeholder="https://linkedin.com/in/username" />
+              </div>
+              <div class="form-group">
+                <label for="soc-github">GitHub URL</label>
+                <input type="url" id="soc-github" placeholder="https://github.com/username" />
+              </div>
+              <div class="form-group">
+                <label for="soc-twitter">Twitter / X URL</label>
+                <input type="url" id="soc-twitter" placeholder="https://x.com/username" />
+              </div>
+              <div class="form-group">
+                <label for="soc-instagram">Instagram URL</label>
+                <input type="url" id="soc-instagram" placeholder="https://instagram.com/username" />
+              </div>
+            </div>
+            <div class="save-bar">
+              <button type="submit" class="btn btn-sage">Save Contact & Social</button>
+              <span id="contact-save-msg" class="save-msg">✓ Saved successfully!</span>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- TAB 6: SETTINGS -->
+      <section id="tab-settings" class="admin-tab-content">
+        <div class="admin-section-header">
+          <div>
+            <h2>Settings & Data Management</h2>
+            <p>Manage security and backup/restore your portfolio content</p>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3>Change Admin Password</h3>
+          </div>
+          <form id="password-change-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="new-password">New Password</label>
+                <input type="password" id="new-password" required minlength="4" />
+              </div>
+              <div class="form-group">
+                <label for="confirm-password">Confirm New Password</label>
+                <input type="password" id="confirm-password" required minlength="4" />
+              </div>
+            </div>
+            <div class="save-bar">
+              <button type="submit" class="btn btn-sage">Update Password</button>
+              <span id="password-save-msg" class="save-msg">✓ Password changed!</span>
+            </div>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3>Backup & Restore</h3>
+            <p>Export your portfolio data to JSON or import an existing backup</p>
+          </div>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+            <button id="export-json-btn" class="btn btn-outline">Export JSON Backup</button>
+            <label class="btn btn-outline" style="cursor: pointer;">
+              Import JSON Backup
+              <input type="file" id="import-json-input" accept=".json" style="display: none;" />
+            </label>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3>Reset to Defaults</h3>
+            <p>Restore placeholder student data and remove all custom changes</p>
+          </div>
+          <button id="reset-defaults-btn" class="btn btn-danger">Reset Everything to Default</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ─── PROJECT MODAL ─── -->
+  <div id="project-modal" class="modal-overlay" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="project-modal-title">Add Project</h3>
+        <button class="modal-close" data-modal="project-modal">&times;</button>
+      </div>
+      <form id="project-modal-form">
+        <input type="hidden" id="pm-id" />
+        <div class="form-grid">
+          <div class="form-group span-2">
+            <label for="pm-title">Project Title</label>
+            <input type="text" id="pm-title" required />
+          </div>
+          <div class="form-group">
+            <label for="pm-year">Year</label>
+            <input type="text" id="pm-year" placeholder="e.g. 2024" />
+          </div>
+          <div class="form-group">
+            <label for="pm-category">Category / Tag</label>
+            <input type="text" id="pm-category" placeholder="e.g. Research, Design, Case Study" />
+          </div>
+          <div class="form-group span-2">
+            <label for="pm-image">Cover Image URL (optional)</label>
+            <input type="url" id="pm-image" placeholder="https://example.com/image.jpg" />
+          </div>
+          <div class="form-group span-2">
+            <label for="pm-link">Project / Case Study Link (optional)</label>
+            <input type="text" id="pm-link" placeholder="https://... or #" />
+          </div>
+          <div class="form-group span-2">
+            <label for="pm-desc">Description</label>
+            <textarea id="pm-desc" rows="3" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" data-modal="project-modal">Cancel</button>
+          <button type="submit" class="btn btn-sage">Save Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ─── SKILL MODAL ─── -->
+  <div id="skill-modal" class="modal-overlay" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="skill-modal-title">Add Skill</h3>
+        <button class="modal-close" data-modal="skill-modal">&times;</button>
+      </div>
+      <form id="skill-modal-form">
+        <input type="hidden" id="sm-id" />
+        <div class="form-grid cols-1">
+          <div class="form-group">
+            <label for="sm-title">Skill / Strength Name</label>
+            <input type="text" id="sm-title" required />
+          </div>
+          <div class="form-group">
+            <label for="sm-desc">Description / How You Apply It</label>
+            <textarea id="sm-desc" rows="3" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" data-modal="skill-modal">Cancel</button>
+          <button type="submit" class="btn btn-sage">Save Skill</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
