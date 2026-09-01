@@ -121,6 +121,28 @@ const DEFAULTS = {
     program: "Your Field of Study",
     availability: "Open to internships & collaborations"
   },
+  headings: {
+    siteTitle: "Portfolio",
+    navAbout: "About",
+    navProjects: "Projects",
+    navSkills: "Skills",
+    navContact: "Contact",
+    heroBtnProjects: "View My Work",
+    heroBtnContact: "Get In Touch",
+    aboutEyebrow: "About",
+    aboutPrefix: "Hello, I'm",
+    aboutBtn: "Let's Connect",
+    projectsEyebrow: "Work",
+    projectsTitlePrefix: "Selected",
+    projectsTitleAccent: "Projects",
+    skillsEyebrow: "Capabilities",
+    skillsTitlePrefix: "Skills &",
+    skillsTitleAccent: "Strengths",
+    contactEyebrow: "Contact",
+    contactTitlePrefix: "Get In",
+    contactTitleAccent: "Touch",
+    contactBtn: "Send Message"
+  },
   theme: {
     preset: "forest",
     font: "'Inter', sans-serif",
@@ -178,7 +200,15 @@ function getData() {
     const stored = localStorage.getItem('portfolio_data');
     if (stored) {
       const parsed = JSON.parse(stored);
-      return Object.assign({}, DEFAULTS, parsed);
+      return {
+        ...DEFAULTS,
+        ...parsed,
+        profile: { ...DEFAULTS.profile, ...(parsed.profile || {}) },
+        headings: { ...DEFAULTS.headings, ...(parsed.headings || {}) },
+        theme: { ...DEFAULTS.theme, ...(parsed.theme || {}) },
+        social: { ...DEFAULTS.social, ...(parsed.social || {}) },
+        contact: { ...DEFAULTS.contact, ...(parsed.contact || {}) }
+      };
     }
   } catch(e) {}
   return DEFAULTS;
@@ -190,40 +220,71 @@ function render() {
   applyTheme(d.theme);
 
   const p = d.profile || DEFAULTS.profile;
+  const h = d.headings || DEFAULTS.headings;
 
-  // Navbar monogram
+  // Site title
+  if (h.siteTitle) {
+    document.title = h.siteTitle;
+    const pt = document.getElementById('page-title');
+    if (pt) pt.textContent = h.siteTitle;
+  }
+
+  // Navbar monogram & links
   const monogram = document.getElementById('monogram');
   if (monogram) monogram.textContent = p.monogram || initials(p.name);
+  setText('nav-link-about', h.navAbout);
+  setText('nav-link-projects', h.navProjects);
+  setText('nav-link-skills', h.navSkills);
+  setText('nav-link-contact', h.navContact);
 
   // Hero
   setText('hero-name', p.name);
   setText('hero-tagline', p.tagline);
   setText('hero-school', p.school ? p.school + (p.program ? ' · ' + p.program : '') : '');
   setText('hero-availability-text', p.availability || 'Open to internships & collaborations');
+  setText('hero-btn-projects', h.heroBtnProjects);
+  setText('hero-btn-contact', h.heroBtnContact);
   setPhoto('hero-photo', p.photo);
 
   // About
+  setText('about-eyebrow', h.aboutEyebrow);
+  setText('about-heading-prefix', h.aboutPrefix);
   setText('about-name', p.name);
   setText('about-bio', p.bio);
   setText('about-location', p.location);
   setText('about-email', p.email);
   setText('about-school', p.school);
   setText('about-program', p.program);
+  setText('about-connect-btn', h.aboutBtn);
   setAttr('about-email-link', 'href', 'mailto:' + p.email);
   setPhoto('about-photo', p.photo);
 
-  // Projects
+  // Projects section labels
+  setText('projects-eyebrow', h.projectsEyebrow);
+  setText('projects-title-prefix', h.projectsTitlePrefix);
+  setText('projects-title-accent', h.projectsTitleAccent);
   renderProjects(d.projects || DEFAULTS.projects);
 
-  // Skills
+  // Skills section labels
+  setText('skills-eyebrow', h.skillsEyebrow);
+  setText('skills-title-prefix', h.skillsTitlePrefix);
+  setText('skills-title-accent', h.skillsTitleAccent);
   renderSkills(d.skills || DEFAULTS.skills);
 
-  // Contact
+  // Contact section labels
+  setText('contact-eyebrow', h.contactEyebrow);
+  setText('contact-title-prefix', h.contactTitlePrefix);
+  setText('contact-title-accent', h.contactTitleAccent);
   const contact = d.contact || DEFAULTS.contact;
   setText('contact-message', contact.message);
   setText('contact-email-val', contact.email || p.email);
   setAttr('contact-email-val', 'href', 'mailto:' + (contact.email || p.email));
   setText('contact-location-val', contact.location || p.location);
+  
+  const submitBtn = document.getElementById('contact-submit-btn');
+  if (submitBtn && h.contactBtn) {
+    submitBtn.innerHTML = `${h.contactBtn} <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
+  }
 
   // Social links
   const s = d.social || DEFAULTS.social;
@@ -300,7 +361,7 @@ function initContactForm() {
 }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
-function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val || ''; }
+function setText(id, val) { const el = document.getElementById(id); if (el && val !== undefined) el.textContent = val; }
 function setAttr(id, attr, val) { const el = document.getElementById(id); if (el && val) el.setAttribute(attr, val); }
 function setPhoto(id, url) {
   const el = document.getElementById(id);

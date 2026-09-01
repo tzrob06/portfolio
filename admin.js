@@ -68,6 +68,7 @@ function setupLoginForm() {
 function loadAdminDashboard() {
   setupTabs();
   populateProfileTab();
+  populateHeadingsTab();
   populateProjectsTab();
   populateSkillsTab();
   populateContactTab();
@@ -162,6 +163,84 @@ function populateProfileTab() {
     document.getElementById('sidebar-name').textContent = currentData.profile.name;
     document.getElementById('sidebar-logo').textContent = currentData.profile.monogram || initials(currentData.profile.name);
   });
+}
+
+// ─── HEADINGS & LABELS TAB ───────────────────────────────────────────────────
+function populateHeadingsTab() {
+  const d = getData();
+  const h = d.headings || DEFAULTS.headings;
+
+  setInputValue('hd-site-title', h.siteTitle || 'Portfolio');
+  setInputValue('hd-nav-about', h.navAbout || 'About');
+  setInputValue('hd-nav-projects', h.navProjects || 'Projects');
+  setInputValue('hd-nav-skills', h.navSkills || 'Skills');
+  setInputValue('hd-nav-contact', h.navContact || 'Contact');
+
+  setInputValue('hd-hero-btn-projects', h.heroBtnProjects || 'View My Work');
+  setInputValue('hd-hero-btn-contact', h.heroBtnContact || 'Get In Touch');
+
+  setInputValue('hd-about-eyebrow', h.aboutEyebrow || 'About');
+  setInputValue('hd-about-prefix', h.aboutPrefix || "Hello, I'm");
+  setInputValue('hd-about-btn', h.aboutBtn || "Let's Connect");
+
+  setInputValue('hd-proj-eyebrow', h.projectsEyebrow || 'Work');
+  setInputValue('hd-proj-title-prefix', h.projectsTitlePrefix || 'Selected');
+  setInputValue('hd-proj-title-accent', h.projectsTitleAccent || 'Projects');
+
+  setInputValue('hd-skill-eyebrow', h.skillsEyebrow || 'Capabilities');
+  setInputValue('hd-skill-title-prefix', h.skillsTitlePrefix || 'Skills &');
+  setInputValue('hd-skill-title-accent', h.skillsTitleAccent || 'Strengths');
+
+  setInputValue('hd-contact-eyebrow', h.contactEyebrow || 'Contact');
+  setInputValue('hd-contact-title-prefix', h.contactTitlePrefix || 'Get In');
+  setInputValue('hd-contact-title-accent', h.contactTitleAccent || 'Touch');
+  setInputValue('hd-contact-btn', h.contactBtn || 'Send Message');
+
+  const form = document.getElementById('headings-form');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const currentData = getData();
+    currentData.headings = {
+      siteTitle: getInputValue('hd-site-title'),
+      navAbout: getInputValue('hd-nav-about'),
+      navProjects: getInputValue('hd-nav-projects'),
+      navSkills: getInputValue('hd-nav-skills'),
+      navContact: getInputValue('hd-nav-contact'),
+
+      heroBtnProjects: getInputValue('hd-hero-btn-projects'),
+      heroBtnContact: getInputValue('hd-hero-btn-contact'),
+
+      aboutEyebrow: getInputValue('hd-about-eyebrow'),
+      aboutPrefix: getInputValue('hd-about-prefix'),
+      aboutBtn: getInputValue('hd-about-btn'),
+
+      projectsEyebrow: getInputValue('hd-proj-eyebrow'),
+      projectsTitlePrefix: getInputValue('hd-proj-title-prefix'),
+      projectsTitleAccent: getInputValue('hd-proj-title-accent'),
+
+      skillsEyebrow: getInputValue('hd-skill-eyebrow'),
+      skillsTitlePrefix: getInputValue('hd-skill-title-prefix'),
+      skillsTitleAccent: getInputValue('hd-skill-title-accent'),
+
+      contactEyebrow: getInputValue('hd-contact-eyebrow'),
+      contactTitlePrefix: getInputValue('hd-contact-title-prefix'),
+      contactTitleAccent: getInputValue('hd-contact-title-accent'),
+      contactBtn: getInputValue('hd-contact-btn')
+    };
+
+    saveData(currentData);
+    showSaveMsg('headings-save-msg');
+  });
+}
+
+function setInputValue(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val || '';
+}
+
+function getInputValue(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
 }
 
 function updatePhotoThumb(thumbId, removeBtnId, url) {
@@ -617,7 +696,7 @@ function setupSettingsTab() {
   });
 }
 
-// ─── MODAL HELPERS ────────────────────────────────────────────────────────────
+// ─── MODAL HELPERS ────────────────────────────────────────────────────
 function setupModals() {
   document.querySelectorAll('[data-modal]').forEach(el => {
     el.addEventListener('click', () => {
