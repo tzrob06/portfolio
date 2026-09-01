@@ -14,6 +14,7 @@
   "headings": {
     "siteTitle": "Portfolio",
     "navAbout": "About",
+    "navExperience": "Experience",
     "navProjects": "Projects",
     "navSkills": "Skills",
     "navContact": "Contact",
@@ -22,7 +23,10 @@
     "aboutEyebrow": "About",
     "aboutPrefix": "Hello, I'm",
     "aboutBtn": "Let's Connect",
-    "projectsEyebrow": "Work",
+    "experienceEyebrow": "Experience",
+    "experienceTitlePrefix": "Work &",
+    "experienceTitleAccent": "Experience",
+    "projectsEyebrow": "Projects",
     "projectsTitlePrefix": "Selected",
     "projectsTitleAccent": "Projects",
     "skillsEyebrow": "Capabilities",
@@ -54,6 +58,26 @@
       "accentBadge": "rgba(82, 183, 136, 0.15)"
     }
   },
+  "experience": [
+    {
+      "id": 1,
+      "role": "Student Research Assistant",
+      "company": "University Innovation Lab",
+      "location": "On-Campus",
+      "startDate": "Sep 2023",
+      "endDate": "Present",
+      "description": "Assisting faculty with data collection, user testing, and synthesizing research insights into presentations."
+    },
+    {
+      "id": 2,
+      "role": "Design & Content Intern",
+      "company": "Creative Studio",
+      "location": "Remote",
+      "startDate": "Jun 2023",
+      "endDate": "Aug 2023",
+      "description": "Collaborated with the creative team on digital assets, brand guidelines, and presentation collateral for client briefs."
+    }
+  ],
   "projects": [
     {
       "id": 1,

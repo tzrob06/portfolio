@@ -230,7 +230,70 @@ ul { list-style: none; }
 .detail-link { color: var(--green); }
 .detail-link:hover { color: var(--green-bright); text-decoration: underline; }
 
+/* ─── EXPERIENCE ─── */
+.experience { background: var(--bg); }
+.experience-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.experience-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem 2rem;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+.experience-card:hover {
+  border-color: var(--green);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 16px var(--green-glow);
+  transform: translateY(-2px);
+}
+.exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+.exp-role {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.exp-period {
+  font-size: 0.78rem;
+  color: var(--green-bright);
+  background: var(--green-badge);
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.exp-company {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--green);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.exp-company-loc {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+.exp-desc {
+  font-size: 0.92rem;
+  color: var(--text-mid);
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
 /* ─── PROJECTS ─── */
+.projects { background: var(--bg-subtle); }
 .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.75rem; }
 .project-card {
   border: 1px solid var(--border); border-radius: var(--radius);

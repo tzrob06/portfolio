@@ -69,6 +69,7 @@ function loadAdminDashboard() {
   setupTabs();
   populateProfileTab();
   populateHeadingsTab();
+  populateExperienceTab();
   populateProjectsTab();
   populateSkillsTab();
   populateInboxTab();
@@ -177,6 +178,7 @@ function populateHeadingsTab() {
 
   setInputValue('hd-site-title', h.siteTitle || 'Portfolio');
   setInputValue('hd-nav-about', h.navAbout || 'About');
+  setInputValue('hd-nav-experience', h.navExperience || 'Experience');
   setInputValue('hd-nav-projects', h.navProjects || 'Projects');
   setInputValue('hd-nav-skills', h.navSkills || 'Skills');
   setInputValue('hd-nav-contact', h.navContact || 'Contact');
@@ -188,7 +190,11 @@ function populateHeadingsTab() {
   setInputValue('hd-about-prefix', h.aboutPrefix || "Hello, I'm");
   setInputValue('hd-about-btn', h.aboutBtn || "Let's Connect");
 
-  setInputValue('hd-proj-eyebrow', h.projectsEyebrow || 'Work');
+  setInputValue('hd-exp-eyebrow', h.experienceEyebrow || 'Experience');
+  setInputValue('hd-exp-title-prefix', h.experienceTitlePrefix || 'Work &');
+  setInputValue('hd-exp-title-accent', h.experienceTitleAccent || 'Experience');
+
+  setInputValue('hd-proj-eyebrow', h.projectsEyebrow || 'Projects');
   setInputValue('hd-proj-title-prefix', h.projectsTitlePrefix || 'Selected');
   setInputValue('hd-proj-title-accent', h.projectsTitleAccent || 'Projects');
 
@@ -208,6 +214,7 @@ function populateHeadingsTab() {
     currentData.headings = {
       siteTitle: getInputValue('hd-site-title'),
       navAbout: getInputValue('hd-nav-about'),
+      navExperience: getInputValue('hd-nav-experience'),
       navProjects: getInputValue('hd-nav-projects'),
       navSkills: getInputValue('hd-nav-skills'),
       navContact: getInputValue('hd-nav-contact'),
@@ -218,6 +225,10 @@ function populateHeadingsTab() {
       aboutEyebrow: getInputValue('hd-about-eyebrow'),
       aboutPrefix: getInputValue('hd-about-prefix'),
       aboutBtn: getInputValue('hd-about-btn'),
+
+      experienceEyebrow: getInputValue('hd-exp-eyebrow'),
+      experienceTitlePrefix: getInputValue('hd-exp-title-prefix'),
+      experienceTitleAccent: getInputValue('hd-exp-title-accent'),
 
       projectsEyebrow: getInputValue('hd-proj-eyebrow'),
       projectsTitlePrefix: getInputValue('hd-proj-title-prefix'),
@@ -338,6 +349,106 @@ window.deleteMessage = function(id) {
   saveData(currentData);
   renderInboxList();
 };
+
+// ─── EXPERIENCE TAB ───────────────────────────────────────────────────────────
+function populateExperienceTab() {
+  renderExperienceAdminList();
+
+  const addBtn = document.getElementById('add-experience-btn');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      openExperienceModal();
+    });
+  }
+
+  const form = document.getElementById('experience-modal-form');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('em-id').value;
+      const currentData = getData();
+      if (!currentData.experience) currentData.experience = [];
+
+      const expObj = {
+        id: id ? parseInt(id, 10) : Date.now(),
+        role: document.getElementById('em-role').value.trim(),
+        company: document.getElementById('em-company').value.trim(),
+        location: document.getElementById('em-location').value.trim(),
+        startDate: document.getElementById('em-start-date').value.trim(),
+        endDate: document.getElementById('em-end-date').value.trim(),
+        description: document.getElementById('em-desc').value.trim()
+      };
+
+      if (id) {
+        const idx = currentData.experience.findIndex(x => x.id === parseInt(id, 10));
+        if (idx !== -1) currentData.experience[idx] = expObj;
+      } else {
+        currentData.experience.push(expObj);
+      }
+
+      saveData(currentData);
+      closeModal('experience-modal');
+      renderExperienceAdminList();
+    });
+  }
+}
+
+function renderExperienceAdminList() {
+  const container = document.getElementById('experience-list');
+  if (!container) return;
+  const d = getData();
+  const list = d.experience || [];
+  container.innerHTML = '';
+
+  if (list.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-muted); font-size:0.875rem;">No experience entries added yet.</p>';
+    return;
+  }
+
+  list.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    const dates = (item.startDate || '') + (item.startDate && item.endDate ? ' – ' : '') + (item.endDate || '');
+    row.innerHTML = `
+      <div class="item-row-body">
+        <div class="item-row-title">${item.role} <span style="font-weight:400; color:var(--text-muted); font-size:0.75rem;">(${item.company || ''}${dates ? ' &middot; ' + dates : ''})</span></div>
+        <div class="item-row-desc">${item.description}</div>
+      </div>
+      <div class="item-row-actions">
+        <button type="button" onclick="editExperience(${item.id})">Edit</button>
+        <button type="button" class="delete" onclick="deleteExperience(${item.id})">Delete</button>
+      </div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+window.editExperience = function(id) {
+  const d = getData();
+  const exp = (d.experience || []).find(x => x.id === id);
+  if (!exp) return;
+  openExperienceModal(exp);
+};
+
+window.deleteExperience = function(id) {
+  if (!confirm('Are you sure you want to delete this experience entry?')) return;
+  const currentData = getData();
+  currentData.experience = (currentData.experience || []).filter(x => x.id !== id);
+  saveData(currentData);
+  renderExperienceAdminList();
+};
+
+function openExperienceModal(item = null) {
+  document.getElementById('experience-modal-title').textContent = item ? 'Edit Experience' : 'Add Experience';
+  document.getElementById('em-id').value = item ? item.id : '';
+  document.getElementById('em-role').value = item ? item.role : '';
+  document.getElementById('em-company').value = item ? item.company : '';
+  document.getElementById('em-location').value = item ? item.location : '';
+  document.getElementById('em-start-date').value = item ? item.startDate : '';
+  document.getElementById('em-end-date').value = item ? item.endDate : '';
+  document.getElementById('em-desc').value = item ? item.description : '';
+  openModal('experience-modal');
+}
 
 // ─── PROJECTS TAB & IMAGE UPLOAD ──────────────────────────────────────────────
 function populateProjectsTab() {

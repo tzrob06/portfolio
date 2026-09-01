@@ -124,6 +124,7 @@ const DEFAULTS = {
   headings: {
     siteTitle: "Portfolio",
     navAbout: "About",
+    navExperience: "Experience",
     navProjects: "Projects",
     navSkills: "Skills",
     navContact: "Contact",
@@ -132,7 +133,10 @@ const DEFAULTS = {
     aboutEyebrow: "About",
     aboutPrefix: "Hello, I'm",
     aboutBtn: "Let's Connect",
-    projectsEyebrow: "Work",
+    experienceEyebrow: "Experience",
+    experienceTitlePrefix: "Work &",
+    experienceTitleAccent: "Experience",
+    projectsEyebrow: "Projects",
     projectsTitlePrefix: "Selected",
     projectsTitleAccent: "Projects",
     skillsEyebrow: "Capabilities",
@@ -149,6 +153,26 @@ const DEFAULTS = {
     radius: "12px",
     colors: THEME_PRESETS.forest.colors
   },
+  experience: [
+    {
+      id: 1,
+      role: "Student Research Assistant",
+      company: "University Innovation Lab",
+      location: "On-Campus",
+      startDate: "Sep 2023",
+      endDate: "Present",
+      description: "Assisting faculty with data collection, user testing, and synthesizing research insights into presentations."
+    },
+    {
+      id: 2,
+      role: "Design & Content Intern",
+      company: "Creative Studio",
+      location: "Remote",
+      startDate: "Jun 2023",
+      endDate: "Aug 2023",
+      description: "Collaborated with the creative team on digital assets, brand guidelines, and presentation collateral for client briefs."
+    }
+  ],
   projects: [
     { id: 1, title: "Research & Analysis Initiative", year: "2024", description: "A comprehensive project exploring emerging trends in sustainability and human-centered design. Synthesized findings into an actionable report and presentation.", category: "Research", link: "#", image: "" },
     { id: 2, title: "Collaborative Design Sprint", year: "2024", description: "Worked in a cross-functional student team to design, test, and prototype a user-centric solution for a real-world brief within 72 hours.", category: "Teamwork", link: "#", image: "" },
@@ -233,6 +257,9 @@ function mergeDefaults(parsed) {
     profile: { ...DEFAULTS.profile, ...(parsed.profile || {}) },
     headings: { ...DEFAULTS.headings, ...(parsed.headings || {}) },
     theme: { ...DEFAULTS.theme, ...(parsed.theme || {}) },
+    experience: parsed.experience || DEFAULTS.experience,
+    projects: parsed.projects || DEFAULTS.projects,
+    skills: parsed.skills || DEFAULTS.skills,
     social: { ...DEFAULTS.social, ...(parsed.social || {}) },
     contact: { ...DEFAULTS.contact, ...(parsed.contact || {}) },
     inbox: parsed.inbox || []
@@ -274,6 +301,7 @@ function render() {
   const monogram = document.getElementById('monogram');
   if (monogram) monogram.textContent = p.monogram || initials(p.name);
   setText('nav-link-about', h.navAbout);
+  setText('nav-link-experience', h.navExperience);
   setText('nav-link-projects', h.navProjects);
   setText('nav-link-skills', h.navSkills);
   setText('nav-link-contact', h.navContact);
@@ -300,13 +328,19 @@ function render() {
   setAttr('about-email-link', 'href', 'mailto:' + p.email);
   setPhoto('about-photo', p.photo);
 
-  // Projects section labels
+  // Experience section labels & list
+  setText('experience-eyebrow', h.experienceEyebrow);
+  setText('experience-title-prefix', h.experienceTitlePrefix);
+  setText('experience-title-accent', h.experienceTitleAccent);
+  renderExperience(d.experience || DEFAULTS.experience);
+
+  // Projects section labels & list
   setText('projects-eyebrow', h.projectsEyebrow);
   setText('projects-title-prefix', h.projectsTitlePrefix);
   setText('projects-title-accent', h.projectsTitleAccent);
   renderProjects(d.projects || DEFAULTS.projects);
 
-  // Skills section labels
+  // Skills section labels & list
   setText('skills-eyebrow', h.skillsEyebrow);
   setText('skills-title-prefix', h.skillsTitlePrefix);
   setText('skills-title-accent', h.skillsTitleAccent);
@@ -337,6 +371,27 @@ function render() {
   // Footer
   setText('footer-name', `${p.name} · Student Portfolio`);
   setText('footer-monogram', p.monogram || initials(p.name));
+}
+
+function renderExperience(experienceList) {
+  const container = document.getElementById('experience-list');
+  if (!container) return;
+  container.innerHTML = '';
+  experienceList.forEach(exp => {
+    const card = document.createElement('div');
+    card.className = 'experience-card';
+    const locHtml = exp.location ? `<span class="exp-company-loc">&middot; ${exp.location}</span>` : '';
+    const dateRange = (exp.startDate || '') + (exp.startDate && exp.endDate ? ' – ' : '') + (exp.endDate || '');
+    card.innerHTML = `
+      <div class="exp-header">
+        <h3 class="exp-role">${exp.role || 'Position'}</h3>
+        ${dateRange ? `<span class="exp-period">${dateRange}</span>` : ''}
+      </div>
+      <div class="exp-company">${exp.company || 'Company / Organization'} ${locHtml}</div>
+      <p class="exp-desc">${exp.description || ''}</p>
+    `;
+    container.appendChild(card);
+  });
 }
 
 function renderProjects(projects) {

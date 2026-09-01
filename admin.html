@@ -45,6 +45,10 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
           Titles & Labels
         </button>
+        <button class="admin-tab" data-tab="experience">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Experience
+        </button>
         <button class="admin-tab" data-tab="projects">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
           Projects
@@ -184,6 +188,10 @@
                 <input type="text" id="hd-nav-about" placeholder="About" />
               </div>
               <div class="form-group">
+                <label for="hd-nav-experience">Nav Link: Experience</label>
+                <input type="text" id="hd-nav-experience" placeholder="Experience" />
+              </div>
+              <div class="form-group">
                 <label for="hd-nav-projects">Nav Link: Projects</label>
                 <input type="text" id="hd-nav-projects" placeholder="Projects" />
               </div>
@@ -227,15 +235,28 @@
             </div>
           </div>
 
-          <!-- Projects & Skills Sections -->
+          <!-- Experience, Projects & Skills Sections -->
           <div class="admin-card">
             <div class="admin-card-header">
-              <h3>Projects &amp; Skills Sections</h3>
+              <h3>Experience, Projects &amp; Skills Sections</h3>
             </div>
             <div class="form-grid">
               <div class="form-group">
+                <label for="hd-exp-eyebrow">Experience Overline Label</label>
+                <input type="text" id="hd-exp-eyebrow" placeholder="Experience" />
+              </div>
+              <div class="form-group">
+                <label for="hd-exp-title-prefix">Experience Title (First Part)</label>
+                <input type="text" id="hd-exp-title-prefix" placeholder="Work &amp;" />
+              </div>
+              <div class="form-group span-2">
+                <label for="hd-exp-title-accent">Experience Title (Highlighted Word)</label>
+                <input type="text" id="hd-exp-title-accent" placeholder="Experience" />
+              </div>
+
+              <div class="form-group">
                 <label for="hd-proj-eyebrow">Projects Overline Label</label>
-                <input type="text" id="hd-proj-eyebrow" placeholder="Work" />
+                <input type="text" id="hd-proj-eyebrow" placeholder="Projects" />
               </div>
               <div class="form-group">
                 <label for="hd-proj-title-prefix">Projects Title (First Word)</label>
@@ -292,12 +313,28 @@
         </form>
       </section>
 
-      <!-- TAB 3: PROJECTS -->
+      <!-- TAB 3: EXPERIENCE -->
+      <section id="tab-experience" class="admin-tab-content">
+        <div class="admin-section-header">
+          <div>
+            <h2>Experience</h2>
+            <p>Manage your internships, work experience, research, or campus leadership</p>
+          </div>
+          <button id="add-experience-btn" class="btn btn-green btn-sm">+ Add Experience</button>
+        </div>
+        <div class="admin-card">
+          <div id="experience-list" class="item-list">
+            <!-- Dynamic experience list -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: PROJECTS -->
       <section id="tab-projects" class="admin-tab-content">
         <div class="admin-section-header">
           <div>
-            <h2>Projects &amp; Work</h2>
-            <p>Manage your coursework, student projects, or volunteer work</p>
+            <h2>Projects</h2>
+            <p>Manage your projects, case studies, or coursework</p>
           </div>
           <button id="add-project-btn" class="btn btn-green btn-sm">+ Add Project</button>
         </div>
@@ -308,7 +345,7 @@
         </div>
       </section>
 
-      <!-- TAB 4: SKILLS -->
+      <!-- TAB 5: SKILLS -->
       <section id="tab-skills" class="admin-tab-content">
         <div class="admin-section-header">
           <div>
@@ -324,7 +361,7 @@
         </div>
       </section>
 
-      <!-- TAB 5: INBOX & MESSAGES -->
+      <!-- TAB 6: INBOX & MESSAGES -->
       <section id="tab-inbox" class="admin-tab-content">
         <div class="admin-section-header">
           <div>
@@ -340,7 +377,7 @@
         </div>
       </section>
 
-      <!-- TAB 6: CONTACT & EMAIL SETUP -->
+      <!-- TAB 7: CONTACT & EMAIL SETUP -->
       <section id="tab-contact" class="admin-tab-content">
         <div class="admin-section-header">
           <div>
@@ -425,7 +462,7 @@
         </form>
       </section>
 
-      <!-- TAB 7: THEME CUSTOMIZATION -->
+      <!-- TAB 8: THEME CUSTOMIZATION -->
       <section id="tab-theme" class="admin-tab-content">
         <div class="admin-section-header">
           <div>
@@ -527,7 +564,7 @@
         </form>
       </section>
 
-      <!-- TAB 8: SETTINGS -->
+      <!-- TAB 9: SETTINGS -->
       <section id="tab-settings" class="admin-tab-content">
         <div class="admin-section-header">
           <div>
@@ -588,6 +625,49 @@
       </section>
 
     </main>
+  </div>
+
+  <!-- ─── EXPERIENCE MODAL ─── -->
+  <div id="experience-modal" class="modal-overlay" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="experience-modal-title">Add Experience</h3>
+        <button class="modal-close" data-modal="experience-modal">&times;</button>
+      </div>
+      <form id="experience-modal-form">
+        <input type="hidden" id="em-id" />
+        <div class="form-grid">
+          <div class="form-group span-2">
+            <label for="em-role">Role / Position Title</label>
+            <input type="text" id="em-role" placeholder="e.g. Student Research Assistant, Design Intern" required />
+          </div>
+          <div class="form-group">
+            <label for="em-company">Company / Organization</label>
+            <input type="text" id="em-company" placeholder="e.g. University Innovation Lab" required />
+          </div>
+          <div class="form-group">
+            <label for="em-location">Location / Type</label>
+            <input type="text" id="em-location" placeholder="e.g. On-Campus, Remote, New York, NY" />
+          </div>
+          <div class="form-group">
+            <label for="em-start-date">Start Date</label>
+            <input type="text" id="em-start-date" placeholder="e.g. Sep 2023" />
+          </div>
+          <div class="form-group">
+            <label for="em-end-date">End Date</label>
+            <input type="text" id="em-end-date" placeholder="e.g. Present or Aug 2024" />
+          </div>
+          <div class="form-group span-2">
+            <label for="em-desc">Key Responsibilities / Achievements</label>
+            <textarea id="em-desc" rows="3" placeholder="Describe what you worked on, key outcomes, tools used..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" data-modal="experience-modal">Cancel</button>
+          <button type="submit" class="btn btn-green">Save Experience</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- ─── PROJECT MODAL ─── -->
