@@ -267,19 +267,17 @@ function mergeDefaults(parsed) {
 }
 
 async function syncRemoteData() {
-  // If localStorage is not present (e.g. first time opening on mobile), fetch data.json
-  if (!localStorage.getItem('portfolio_data')) {
-    try {
-      const res = await fetch('data.json?t=' + Date.now());
-      if (res.ok) {
-        const json = await res.json();
-        if (json && typeof json === 'object') {
-          localStorage.setItem('portfolio_data', JSON.stringify(json));
-          render();
-        }
+  // Always fetch latest data.json from repository with cache busting so visitors see published updates
+  try {
+    const res = await fetch('data.json?t=' + Date.now());
+    if (res.ok) {
+      const json = await res.json();
+      if (json && typeof json === 'object') {
+        localStorage.setItem('portfolio_data', JSON.stringify(json));
+        render();
       }
-    } catch(e) {}
-  }
+    }
+  } catch(e) {}
 }
 
 // ─── RENDER PORTFOLIO ─────────────────────────────────────────────────────────

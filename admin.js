@@ -832,8 +832,40 @@ function hexToRgba(hex, alpha) {
   return hex;
 }
 
-// ─── SETTINGS TAB ─────────────────────────────────────────────────────────────
+// ─── SETTINGS TAB & GITHUB 1-CLICK PUBLISHING ────────────────────────────────
 function setupSettingsTab() {
+  // Load saved GitHub token
+  const savedToken = localStorage.getItem('portfolio_gh_token') || '';
+  const ghTokenInput = document.getElementById('gh-token');
+  if (ghTokenInput && savedToken) {
+    ghTokenInput.value = savedToken;
+  }
+
+  // Save GitHub Token button
+  const saveTokenBtn = document.getElementById('gh-save-token-btn');
+  if (saveTokenBtn) {
+    saveTokenBtn.addEventListener('click', () => {
+      const tokenVal = (document.getElementById('gh-token') || {}).value.trim();
+      if (tokenVal) {
+        localStorage.setItem('portfolio_gh_token', tokenVal);
+        showGhStatus('✓ GitHub Token saved in your browser!', true);
+      } else {
+        localStorage.removeItem('portfolio_gh_token');
+        showGhStatus('Token cleared.', false);
+      }
+    });
+  }
+
+  // Publish to GitHub buttons (Settings Card & Sidebar)
+  const ghPublishBtn = document.getElementById('gh-publish-btn');
+  if (ghPublishBtn) {
+    ghPublishBtn.addEventListener('click', () => publishToGitHub(ghPublishBtn));
+  }
+  const sidebarPublishBtn = document.getElementById('sidebar-publish-btn');
+  if (sidebarPublishBtn) {
+    sidebarPublishBtn.addEventListener('click', () => publishToGitHub(sidebarPublishBtn));
+  }
+
   // Password change
   const passForm = document.getElementById('password-change-form');
   passForm.addEventListener('submit', (e) => {
@@ -920,6 +952,106 @@ function setupSettingsTab() {
       location.reload();
     }
   });
+}
+
+// ─── GITHUB API DIRECT PUBLISHER ──────────────────────────────────────────────
+async function publishToGitHub(triggerBtn) {
+  let token = (document.getElementById('gh-token') || {}).value || localStorage.getItem('portfolio_gh_token');
+  if (token) token = token.trim();
+
+  if (!token) {
+    const entered = prompt('Please enter your GitHub Personal Access Token to publish live to tzrob06/portfolio:');
+    if (!entered || !entered.trim()) return;
+    token = entered.trim();
+    localStorage.setItem('portfolio_gh_token', token);
+    const input = document.getElementById('gh-token');
+    if (input) input.value = token;
+  }
+
+  const originalContent = triggerBtn ? triggerBtn.innerHTML : '';
+  if (triggerBtn) {
+    triggerBtn.disabled = true;
+    triggerBtn.textContent = 'Pushing to GitHub...';
+  }
+
+  try {
+    const repoOwner = 'tzrob06';
+    const repoName = 'portfolio';
+    const filePath = 'data.json';
+    const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+
+    // 1. Get current SHA of data.json
+    let currentSha = null;
+    const getRes = await fetch(apiUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (getRes.ok) {
+      const getJson = await getRes.json();
+      currentSha = getJson.sha;
+    } else if (getRes.status === 401 || getRes.status === 403) {
+      throw new Error('GitHub token invalid or lacks "repo" / "contents:write" permission.');
+    }
+
+    // 2. Prepare UTF-8 base64 encoded data.json content
+    const dataObj = getData();
+    const jsonString = JSON.stringify(dataObj, null, 2);
+    const utf8Bytes = new TextEncoder().encode(jsonString);
+    let binary = '';
+    for (let i = 0; i < utf8Bytes.length; i++) {
+      binary += String.fromCharCode(utf8Bytes[i]);
+    }
+    const base64Content = btoa(binary);
+
+    // 3. PUT commit to GitHub
+    const putBody = {
+      message: 'Update portfolio data via admin panel',
+      content: base64Content,
+      branch: 'main'
+    };
+    if (currentSha) {
+      putBody.sha = currentSha;
+    }
+
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(putBody)
+    });
+
+    const putJson = await putRes.json();
+
+    if (putRes.ok) {
+      showGhStatus('✓ Published to GitHub! Live site is now updated.', true);
+      alert('🎉 Success! Your latest changes have been pushed directly to GitHub. The live website is updated!');
+    } else {
+      throw new Error(putJson.message || 'Failed to update GitHub repository.');
+    }
+  } catch (err) {
+    showGhStatus(`Error: ${err.message}`, false);
+    alert(`Could not push to GitHub:\n${err.message}`);
+  } finally {
+    if (triggerBtn) {
+      triggerBtn.disabled = false;
+      triggerBtn.innerHTML = originalContent;
+    }
+  }
+}
+
+function showGhStatus(msg, isSuccess) {
+  const el = document.getElementById('gh-publish-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isSuccess ? 'var(--green-bright)' : '#f87171';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 6000);
 }
 
 // ─── MODAL HELPERS ────────────────────────────────────────────────────
