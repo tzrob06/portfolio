@@ -909,6 +909,12 @@ function setupSettingsTab() {
     });
   }
 
+  // Test GitHub Connection button
+  const testTokenBtn = document.getElementById('gh-test-btn');
+  if (testTokenBtn) {
+    testTokenBtn.addEventListener('click', () => testGitHubConnection(testTokenBtn));
+  }
+
   // Publish to GitHub buttons (Settings Card & Sidebar)
   const ghPublishBtn = document.getElementById('gh-publish-btn');
   if (ghPublishBtn) {
@@ -1008,14 +1014,68 @@ function setupSettingsTab() {
 }
 
 // ─── GITHUB API DIRECT PUBLISHER ──────────────────────────────────────────────
+function getCleanGitHubToken() {
+  let token = (document.getElementById('gh-token') || {}).value || localStorage.getItem('portfolio_gh_token') || '';
+  token = token.trim().replace(/^['"]+|['"]+$/g, '');
+  if (token.toLowerCase().startsWith('bearer ')) token = token.substring(7).trim();
+  if (token.toLowerCase().startsWith('token ')) token = token.substring(6).trim();
+  return token;
+}
+
+function getGitHubAuthHeader(token) {
+  // Support both classic tokens (token ghp_...) and fine-grained (Bearer github_pat_...)
+  if (token.startsWith('github_pat_')) {
+    return `Bearer ${token}`;
+  }
+  return `token ${token}`;
+}
+
+async function testGitHubConnection(triggerBtn) {
+  const token = getCleanGitHubToken();
+  if (!token) {
+    showGhStatus('⚠️ Please enter a GitHub Personal Access Token first.', false);
+    return;
+  }
+
+  const origText = triggerBtn.textContent;
+  triggerBtn.disabled = true;
+  triggerBtn.textContent = 'Testing...';
+
+  try {
+    const authHeader = getGitHubAuthHeader(token);
+    const repoRes = await fetch('https://api.github.com/repos/tzrob06/portfolio', {
+      headers: {
+        'Authorization': authHeader,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (repoRes.status === 401) {
+      throw new Error('Invalid token (401 Bad credentials). Check that you copied the complete token.');
+    } else if (repoRes.status === 404 || repoRes.status === 403) {
+      throw new Error('Repository access denied (403/404). Ensure your token has "repo" scope checked.');
+    } else if (!repoRes.ok) {
+      const errJson = await repoRes.json().catch(() => ({}));
+      throw new Error(errJson.message || `GitHub error ${repoRes.status}`);
+    }
+
+    const repoData = await repoRes.json();
+    showGhStatus(`✓ Connected to ${repoData.full_name}! Token is valid and ready to publish.`, true);
+  } catch (err) {
+    showGhStatus(`❌ Connection failed: ${err.message}`, false);
+  } finally {
+    triggerBtn.disabled = false;
+    triggerBtn.textContent = origText;
+  }
+}
+
 async function publishToGitHub(triggerBtn) {
-  let token = (document.getElementById('gh-token') || {}).value || localStorage.getItem('portfolio_gh_token');
-  if (token) token = token.trim();
+  let token = getCleanGitHubToken();
 
   if (!token) {
     const entered = prompt('Please enter your GitHub Personal Access Token to publish live to tzrob06/portfolio:');
     if (!entered || !entered.trim()) return;
-    token = entered.trim();
+    token = entered.trim().replace(/^['"]+|['"]+$/g, '');
     localStorage.setItem('portfolio_gh_token', token);
     const input = document.getElementById('gh-token');
     if (input) input.value = token;
@@ -1032,12 +1092,13 @@ async function publishToGitHub(triggerBtn) {
     const repoName = 'portfolio';
     const filePath = 'data.json';
     const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+    const authHeader = getGitHubAuthHeader(token);
 
     // 1. Get current SHA of data.json
     let currentSha = null;
     const getRes = await fetch(apiUrl, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': authHeader,
         'Accept': 'application/vnd.github.v3+json'
       }
     });
@@ -1045,17 +1106,23 @@ async function publishToGitHub(triggerBtn) {
     if (getRes.ok) {
       const getJson = await getRes.json();
       currentSha = getJson.sha;
-    } else if (getRes.status === 401 || getRes.status === 403) {
-      throw new Error('GitHub token invalid or lacks "repo" / "contents:write" permission.');
+    } else if (getRes.status === 401) {
+      throw new Error('Invalid GitHub token (401 Bad credentials). Please verify your token.');
+    } else if (getRes.status === 403 || getRes.status === 404) {
+      throw new Error('Permission denied. Make sure your GitHub token has the "repo" scope checked.');
     }
 
     // 2. Prepare UTF-8 base64 encoded data.json content
     const dataObj = getData();
     const jsonString = JSON.stringify(dataObj, null, 2);
     const utf8Bytes = new TextEncoder().encode(jsonString);
+    
+    // Chunked binary conversion to prevent stack overflow on large data
     let binary = '';
-    for (let i = 0; i < utf8Bytes.length; i++) {
-      binary += String.fromCharCode(utf8Bytes[i]);
+    const chunkSize = 8192;
+    for (let i = 0; i < utf8Bytes.length; i += chunkSize) {
+      const chunk = utf8Bytes.subarray(i, i + chunkSize);
+      binary += String.fromCharCode.apply(null, chunk);
     }
     const base64Content = btoa(binary);
 
@@ -1072,7 +1139,7 @@ async function publishToGitHub(triggerBtn) {
     const putRes = await fetch(apiUrl, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': authHeader,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
@@ -1085,11 +1152,15 @@ async function publishToGitHub(triggerBtn) {
       showGhStatus('✓ Published to GitHub! Live site is now updated.', true);
       alert('🎉 Success! Your latest changes have been pushed directly to GitHub. The live website is updated!');
     } else {
-      throw new Error(putJson.message || 'Failed to update GitHub repository.');
+      let errMsg = putJson.message || 'Failed to update GitHub repository.';
+      if (putRes.status === 422) {
+        errMsg = 'GitHub error (422): Content too large or SHA mismatch. Try clicking again.';
+      }
+      throw new Error(errMsg);
     }
   } catch (err) {
-    showGhStatus(`Error: ${err.message}`, false);
-    alert(`Could not push to GitHub:\n${err.message}`);
+    showGhStatus(`❌ Publish error: ${err.message}`, false);
+    alert(`Could not push to GitHub:\n\n${err.message}\n\nTip: You can click "Test Connection" in Settings & Data to verify your token.`);
   } finally {
     if (triggerBtn) {
       triggerBtn.disabled = false;
@@ -1104,7 +1175,6 @@ function showGhStatus(msg, isSuccess) {
   el.textContent = msg;
   el.style.color = isSuccess ? 'var(--green-bright)' : '#f87171';
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 6000);
 }
 
 // ─── MODAL HELPERS ────────────────────────────────────────────────────
