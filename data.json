@@ -9,7 +9,8 @@
     "email": "you@email.com",
     "school": "Trinity College",
     "program": "B.S. Engineering & Computer Science ('28)",
-    "availability": "Open to internships & research collaborations"
+    "availability": "Open to internships & research collaborations",
+    "resumeUrl": ""
   },
   "headings": {
     "siteTitle": "Thomas Z. Roberts | Portfolio",
@@ -125,7 +126,7 @@
     {
       "id": 2,
       "title": "Quantitative Reasoning & Analysis",
-      "description": "Strong foundation in applied mathematics, analytical modeling, and systematic engineering methods."
+      "description: "Strong foundation in applied mathematics, analytical modeling, and systematic engineering methods."
     },
     {
       "id": 3,

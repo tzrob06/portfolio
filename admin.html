@@ -154,6 +154,26 @@
                 </div>
               </div>
 
+              <!-- Resume Upload / URL -->
+              <div class="form-group span-2">
+                <label>Resume / CV (PDF or Link)</label>
+                <div class="image-upload-wrap" style="align-items: flex-start;">
+                  <div class="image-upload-controls" style="width: 100%;">
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                      <button type="button" class="file-btn" id="prof-resume-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        Upload PDF from Computer
+                      </button>
+                      <input type="file" id="prof-resume-file" accept=".pdf,application/pdf" style="display: none;" />
+                      <button type="button" id="prof-resume-remove" class="btn-ghost" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; border-radius: 6px; display: none;">Remove Resume</button>
+                      <span id="prof-resume-status" style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.25rem;">No resume attached</span>
+                    </div>
+                    <input type="text" id="prof-resume" placeholder="Or paste Google Drive / Dropbox / hosted PDF link (https://...)" style="margin-top: 0.5rem;" />
+                    <small style="color: var(--text-muted); font-size: 0.75rem;">Uploading a PDF or adding a link will automatically display a <b>"Download Resume"</b> button on your homepage.</small>
+                  </div>
+                </div>
+              </div>
+
               <div class="form-group span-2">
                 <label for="prof-bio">About Me Bio</label>
                 <textarea id="prof-bio" rows="4"></textarea>

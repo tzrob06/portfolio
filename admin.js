@@ -231,6 +231,80 @@ function populateProfileTab() {
     updatePhotoThumb('prof-photo-thumb', 'prof-photo-remove', '');
   });
 
+  // Handle Resume (PDF or Link)
+  const resumeInput = document.getElementById('prof-resume');
+  const resumeBtn = document.getElementById('prof-resume-btn');
+  const resumeFileInput = document.getElementById('prof-resume-file');
+  const resumeRemoveBtn = document.getElementById('prof-resume-remove');
+  const resumeStatus = document.getElementById('prof-resume-status');
+
+  function updateResumeDisplay(url) {
+    if (url && url.trim()) {
+      if (resumeRemoveBtn) resumeRemoveBtn.style.display = 'inline-block';
+      if (resumeStatus) {
+        if (url.startsWith('data:application/pdf')) {
+          resumeStatus.textContent = '✓ Embedded PDF attached';
+          resumeStatus.style.color = 'var(--green-bright)';
+        } else {
+          resumeStatus.textContent = '✓ Resume link attached';
+          resumeStatus.style.color = 'var(--green-bright)';
+        }
+      }
+    } else {
+      if (resumeRemoveBtn) resumeRemoveBtn.style.display = 'none';
+      if (resumeStatus) {
+        resumeStatus.textContent = 'No resume attached';
+        resumeStatus.style.color = 'var(--text-muted)';
+      }
+    }
+  }
+
+  if (resumeInput) {
+    resumeInput.value = p.resumeUrl || '';
+    updateResumeDisplay(p.resumeUrl);
+
+    resumeInput.addEventListener('input', () => {
+      updateResumeDisplay(resumeInput.value.trim());
+    });
+  }
+
+  if (resumeBtn && resumeFileInput) {
+    resumeBtn.addEventListener('click', () => resumeFileInput.click());
+  }
+
+  if (resumeFileInput) {
+    resumeFileInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        alert('Please select a valid PDF file.');
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Notice: PDF file exceeds 2MB. For best performance, you can also upload your PDF to Google Drive or Dropbox and paste the share link.');
+      }
+      if (resumeStatus) resumeStatus.textContent = 'Reading PDF...';
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64Pdf = event.target.result;
+        if (resumeInput) resumeInput.value = base64Pdf;
+        updateResumeDisplay(base64Pdf);
+      };
+      reader.onerror = () => {
+        alert('Could not read PDF file.');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  if (resumeRemoveBtn) {
+    resumeRemoveBtn.addEventListener('click', () => {
+      if (resumeInput) resumeInput.value = '';
+      if (resumeFileInput) resumeFileInput.value = '';
+      updateResumeDisplay('');
+    });
+  }
+
   const form = document.getElementById('profile-form');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -244,6 +318,7 @@ function populateProfileTab() {
       availability: document.getElementById('prof-availability').value.trim(),
       location: document.getElementById('prof-location').value.trim(),
       photo: document.getElementById('prof-photo').value.trim(),
+      resumeUrl: (document.getElementById('prof-resume') ? document.getElementById('prof-resume').value.trim() : ''),
       bio: document.getElementById('prof-bio').value.trim()
     };
     saveData(currentData);
@@ -760,116 +835,125 @@ function openSkillModal(item = null) {
   openModal('skill-modal');
 }
 
-// ─── CONTACT & EMAIL SETUP TAB ────────────────────────────────────────────────
+// ─── CONTACT & EMAIL TAB ──────────────────────────────────────────────────────
 function populateContactTab() {
   const d = getData();
-  const contact = d.contact || DEFAULTS.contact;
-  const social = d.social || DEFAULTS.social;
+  const c = d.contact || DEFAULTS.contact;
+  const s = d.social || DEFAULTS.social;
 
-  document.getElementById('contact-formspree').value = contact.formspreeUrl || '';
-  document.getElementById('contact-web3forms').value = contact.web3formsKey || '';
+  setInputValue('contact-formspree', c.formspreeUrl || '');
+  setInputValue('contact-web3forms', c.web3formsKey || '');
+  setInputValue('contact-email', c.email || (d.profile && d.profile.email) || '');
+  setInputValue('contact-loc', c.location || (d.profile && d.profile.location) || '');
+  setInputValue('contact-msg-input', c.message || '');
 
-  document.getElementById('contact-email').value = contact.email || '';
-  document.getElementById('contact-loc').value = contact.location || '';
-  document.getElementById('contact-msg-input').value = contact.message || '';
-
-  document.getElementById('soc-linkedin').value = social.linkedin || '';
-  document.getElementById('soc-github').value = social.github || '';
-  document.getElementById('soc-twitter').value = social.twitter || '';
-  document.getElementById('soc-instagram').value = social.instagram || '';
+  setInputValue('soc-linkedin', s.linkedin || '');
+  setInputValue('soc-github', s.github || '');
+  setInputValue('soc-twitter', s.twitter || '');
+  setInputValue('soc-instagram', s.instagram || '');
 
   const form = document.getElementById('contact-form');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const currentData = getData();
     currentData.contact = {
-      formspreeUrl: document.getElementById('contact-formspree').value.trim(),
-      web3formsKey: document.getElementById('contact-web3forms').value.trim(),
-      email: document.getElementById('contact-email').value.trim(),
-      location: document.getElementById('contact-loc').value.trim(),
-      message: document.getElementById('contact-msg-input').value.trim()
+      email: getInputValue('contact-email'),
+      location: getInputValue('contact-loc'),
+      message: getInputValue('contact-msg-input'),
+      formspreeUrl: getInputValue('contact-formspree'),
+      web3formsKey: getInputValue('contact-web3forms')
     };
+
     currentData.social = {
-      linkedin: document.getElementById('soc-linkedin').value.trim(),
-      github: document.getElementById('soc-github').value.trim(),
-      twitter: document.getElementById('soc-twitter').value.trim(),
-      instagram: document.getElementById('soc-instagram').value.trim()
+      linkedin: getInputValue('soc-linkedin'),
+      github: getInputValue('soc-github'),
+      twitter: getInputValue('soc-twitter'),
+      instagram: getInputValue('soc-instagram')
     };
+
     saveData(currentData);
     showSaveMsg('contact-save-msg');
   });
 }
 
-// ─── THEME & APPEARANCE TAB ───────────────────────────────────────────────────
+// ─── THEME TAB ────────────────────────────────────────────────────────────────
 function populateThemeTab() {
   const d = getData();
   const theme = d.theme || DEFAULTS.theme;
-  const c = theme.colors || THEME_PRESETS.forest.colors;
 
   // Render presets
   const presetsContainer = document.getElementById('theme-presets-container');
   presetsContainer.innerHTML = '';
   Object.keys(THEME_PRESETS).forEach(key => {
-    const p = THEME_PRESETS[key];
+    const preset = THEME_PRESETS[key];
     const card = document.createElement('div');
     card.className = `theme-preset-card ${theme.preset === key ? 'active' : ''}`;
     card.innerHTML = `
-      <div class="preset-colors-row">
-        <span class="preset-color-dot" style="background:${p.colors.bg}"></span>
-        <span class="preset-color-dot" style="background:${p.colors.bgCard}"></span>
-        <span class="preset-color-dot" style="background:${p.colors.accent}"></span>
-        <span class="preset-color-dot" style="background:${p.colors.accentBright}"></span>
+      <div class="preset-name">${preset.name}</div>
+      <div class="preset-swatches">
+        <div class="preset-swatch" style="background:${preset.colors.bg}"></div>
+        <div class="preset-swatch" style="background:${preset.colors.bgCard}"></div>
+        <div class="preset-swatch" style="background:${preset.colors.accent}"></div>
+        <div class="preset-swatch" style="background:${preset.colors.accentBright}"></div>
       </div>
-      <div class="preset-name">${p.name}</div>
     `;
     card.addEventListener('click', () => {
-      selectThemePreset(key);
+      document.querySelectorAll('.theme-preset-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+
+      const currentData = getData();
+      currentData.theme = {
+        preset: key,
+        font: preset.font,
+        radius: preset.radius,
+        colors: { ...preset.colors }
+      };
+      saveData(currentData);
+      applyTheme(currentData.theme);
+      syncColorPickers(currentData.theme.colors);
+      setInputValue('theme-font', preset.font);
+      setInputValue('theme-radius', preset.radius);
+      showSaveMsg('theme-save-msg');
     });
     presetsContainer.appendChild(card);
   });
 
-  // Set pickers values
-  setColorPicker('col-bg', 'hex-bg', c.bg || '#0b120e');
-  setColorPicker('col-card', 'hex-card', c.bgCard || '#16251e');
-  setColorPicker('col-accent', 'hex-accent', c.accent || '#52b788');
-  setColorPicker('col-bright', 'hex-bright', c.accentBright || '#4ade80');
-  setColorPicker('col-border', 'hex-border', c.border || '#263d31');
-  setColorPicker('col-text', 'hex-text', c.text || '#ecf4ee');
+  // Sync color pickers
+  syncColorPickers(theme.colors || THEME_PRESETS.forest.colors);
+  setInputValue('theme-font', theme.font || "'Inter', sans-serif");
+  setInputValue('theme-radius', theme.radius || "12px");
 
-  if (theme.font) document.getElementById('theme-font').value = theme.font;
-  if (theme.radius) document.getElementById('theme-radius').value = theme.radius;
-
-  // Custom Theme Form Submit
+  // Custom theme form
   const form = document.getElementById('custom-theme-form');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const currentData = getData();
-    const bg = document.getElementById('col-bg').value;
-    const bgCard = document.getElementById('col-card').value;
-    const accent = document.getElementById('col-accent').value;
-    const accentBright = document.getElementById('col-bright').value;
-    const border = document.getElementById('col-border').value;
-    const text = document.getElementById('col-text').value;
+    const colBg = getInputValue('col-bg');
+    const colCard = getInputValue('col-card');
+    const colAccent = getInputValue('col-accent');
+    const colBright = getInputValue('col-bright');
+    const colBorder = getInputValue('col-border');
+    const colText = getInputValue('col-text');
 
     currentData.theme = {
       preset: 'custom',
-      font: document.getElementById('theme-font').value,
-      radius: document.getElementById('theme-radius').value,
+      font: getInputValue('theme-font'),
+      radius: getInputValue('theme-radius'),
       colors: {
-        bg: bg,
-        bgSubtle: bgCard,
-        bgCard: bgCard,
-        bgCardAlt: bgCard,
-        border: border,
-        borderFocus: accentBright,
-        text: text,
-        textMid: text,
-        textMuted: border,
-        accent: accent,
-        accentBright: accentBright,
-        accentDark: accent,
-        accentGlow: hexToRgba(accent, 0.2),
-        accentBadge: hexToRgba(accent, 0.15)
+        bg: colBg,
+        bgSubtle: adjustColorBrightness(colBg, 12),
+        bgCard: colCard,
+        bgCardAlt: adjustColorBrightness(colCard, 10),
+        border: colBorder,
+        borderFocus: colBright,
+        text: colText,
+        textMid: adjustColorBrightness(colText, -25),
+        textMuted: adjustColorBrightness(colText, -45),
+        accent: colAccent,
+        accentBright: colBright,
+        accentDark: adjustColorBrightness(colAccent, -30),
+        accentGlow: hexToRgba(colAccent, 0.2),
+        accentBadge: hexToRgba(colAccent, 0.15)
       }
     };
 
@@ -877,161 +961,86 @@ function populateThemeTab() {
     applyTheme(currentData.theme);
     showSaveMsg('theme-save-msg');
   });
+
+  // Real-time color picker update listeners
+  setupLiveColorPicker('col-bg', 'hex-bg');
+  setupLiveColorPicker('col-card', 'hex-card');
+  setupLiveColorPicker('col-accent', 'hex-accent');
+  setupLiveColorPicker('col-bright', 'hex-bright');
+  setupLiveColorPicker('col-border', 'hex-border');
+  setupLiveColorPicker('col-text', 'hex-text');
 }
 
-function selectThemePreset(key) {
-  const p = THEME_PRESETS[key];
-  if (!p) return;
-
-  const currentData = getData();
-  currentData.theme = {
-    preset: key,
-    font: p.font,
-    radius: p.radius,
-    colors: p.colors
-  };
-
-  saveData(currentData);
-  applyTheme(currentData.theme);
-
-  // Update UI pickers
-  setColorPicker('col-bg', 'hex-bg', p.colors.bg);
-  setColorPicker('col-card', 'hex-card', p.colors.bgCard);
-  setColorPicker('col-accent', 'hex-accent', p.colors.accent);
-  setColorPicker('col-bright', 'hex-bright', p.colors.accentBright);
-  setColorPicker('col-border', 'hex-border', p.colors.border);
-  setColorPicker('col-text', 'hex-text', p.colors.text);
-
-  if (p.font) document.getElementById('theme-font').value = p.font;
-  if (p.radius) document.getElementById('theme-radius').value = p.radius;
-
-  // Update active state in cards
-  document.querySelectorAll('.theme-preset-card').forEach((el, idx) => {
-    el.classList.toggle('active', Object.keys(THEME_PRESETS)[idx] === key);
-  });
-
-  showSaveMsg('theme-save-msg');
+function syncColorPickers(colors) {
+  if (!colors) return;
+  setColorValue('col-bg', 'hex-bg', colors.bg);
+  setColorValue('col-card', 'hex-card', colors.bgCard);
+  setColorValue('col-accent', 'hex-accent', colors.accent);
+  setColorValue('col-bright', 'hex-bright', colors.accentBright);
+  setColorValue('col-border', 'hex-border', colors.border);
+  setColorValue('col-text', 'hex-text', colors.text);
 }
 
-function setColorPicker(inputId, hexId, value) {
-  const input = document.getElementById(inputId);
-  const hex = document.getElementById(hexId);
-  if (!input) return;
-  input.value = value;
-  if (hex) hex.textContent = value;
-
-  input.oninput = () => {
-    if (hex) hex.textContent = input.value;
-  };
+function setColorValue(inputId, hexSpanId, val) {
+  const el = document.getElementById(inputId);
+  const span = document.getElementById(hexSpanId);
+  if (el && val) el.value = val;
+  if (span && val) span.textContent = val;
 }
 
-function hexToRgba(hex, alpha) {
-  let c;
-  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
-    c = hex.substring(1).split('');
-    if (c.length === 3) {
-      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-    }
-    c = '0x' + c.join('');
-    return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + `,${alpha})`;
-  }
-  return hex;
-}
-
-// ─── SETTINGS TAB & GITHUB 1-CLICK PUBLISHING ────────────────────────────────
-function setupSettingsTab() {
-  // Load saved GitHub token
-  const savedToken = localStorage.getItem('portfolio_gh_token') || '';
-  const ghTokenInput = document.getElementById('gh-token');
-  if (ghTokenInput && savedToken) {
-    ghTokenInput.value = savedToken;
-  }
-
-  // Save GitHub Token button
-  const saveTokenBtn = document.getElementById('gh-save-token-btn');
-  if (saveTokenBtn) {
-    saveTokenBtn.addEventListener('click', () => {
-      const tokenVal = (document.getElementById('gh-token') || {}).value.trim();
-      if (tokenVal) {
-        localStorage.setItem('portfolio_gh_token', tokenVal);
-        showGhStatus('✓ GitHub Token saved in your browser!', true);
-      } else {
-        localStorage.removeItem('portfolio_gh_token');
-        showGhStatus('Token cleared.', false);
-      }
+function setupLiveColorPicker(inputId, hexSpanId) {
+  const el = document.getElementById(inputId);
+  const span = document.getElementById(hexSpanId);
+  if (el && span) {
+    el.addEventListener('input', () => {
+      span.textContent = el.value;
     });
   }
+}
 
-  // Test GitHub Connection button
-  const testTokenBtn = document.getElementById('gh-test-btn');
-  if (testTokenBtn) {
-    testTokenBtn.addEventListener('click', () => testGitHubConnection(testTokenBtn));
-  }
-
-  // Publish to GitHub buttons (Settings Card & Sidebar)
-  const ghPublishBtn = document.getElementById('gh-publish-btn');
-  if (ghPublishBtn) {
-    ghPublishBtn.addEventListener('click', () => publishToGitHub(ghPublishBtn));
-  }
-  const sidebarPublishBtn = document.getElementById('sidebar-publish-btn');
-  if (sidebarPublishBtn) {
-    sidebarPublishBtn.addEventListener('click', () => publishToGitHub(sidebarPublishBtn));
-  }
-
+// ─── SETTINGS TAB (BACKUP, RESTORE & 1-CLICK GITHUB SYNC) ─────────────────────
+function setupSettingsTab() {
   // Password change
   const passForm = document.getElementById('password-change-form');
   passForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const p1 = document.getElementById('new-password').value;
-    const p2 = document.getElementById('confirm-password').value;
-    if (p1 !== p2) {
-      alert('Passwords do not match.');
+    const newPass = document.getElementById('new-password').value;
+    const confPass = document.getElementById('confirm-password').value;
+    if (newPass !== confPass) {
+      alert('Passwords do not match!');
       return;
     }
-    localStorage.setItem('portfolio_password', p1);
+    localStorage.setItem('portfolio_password', newPass);
     showSaveMsg('password-save-msg');
     passForm.reset();
   });
 
-  // Copy Mobile Sync Link
-  const syncBtn = document.getElementById('copy-sync-link-btn');
-  if (syncBtn) {
-    syncBtn.addEventListener('click', () => {
-      const data = getData();
-      const currentUrl = window.location.href.split('#')[0];
-      const indexUrl = currentUrl.replace(/admin\.html$/, 'index.html');
-      const syncUrl = indexUrl + '#sync=' + encodeURIComponent(JSON.stringify(data));
-      
-      navigator.clipboard.writeText(syncUrl).then(() => {
-        showSaveMsg('sync-link-msg');
-      }).catch(() => {
-        prompt('Copy this link and open it on your phone:', syncUrl);
-      });
+  // Mobile Sync Link
+  document.getElementById('copy-sync-link-btn').addEventListener('click', () => {
+    const dataStr = encodeURIComponent(JSON.stringify(getData()));
+    const fullUrl = `${window.location.origin}${window.location.pathname.replace('admin.html', 'index.html')}#sync=${dataStr}`;
+    navigator.clipboard.writeText(fullUrl).then(() => {
+      const msg = document.getElementById('sync-link-msg');
+      msg.classList.add('show');
+      setTimeout(() => msg.classList.remove('show'), 6000);
     });
-  }
+  });
 
-  // Copy Data JSON
-  const copyJsonBtn = document.getElementById('copy-json-btn');
-  if (copyJsonBtn) {
-    copyJsonBtn.addEventListener('click', () => {
-      const jsonStr = JSON.stringify(getData(), null, 2);
-      navigator.clipboard.writeText(jsonStr).then(() => {
-        alert('✓ Portfolio JSON copied to clipboard!');
-      }).catch(() => {
-        prompt('Copy your portfolio JSON data:', jsonStr);
-      });
+  // Copy JSON
+  document.getElementById('copy-json-btn').addEventListener('click', () => {
+    const dataStr = JSON.stringify(getData(), null, 2);
+    navigator.clipboard.writeText(dataStr).then(() => {
+      alert('✓ Complete portfolio configuration JSON copied to clipboard!');
     });
-  }
+  });
 
-  // Export JSON
+  // Download data.json
   document.getElementById('export-json-btn').addEventListener('click', () => {
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(getData(), null, 2));
-    const a = document.createElement('a');
-    a.setAttribute('href', dataStr);
-    a.setAttribute('download', 'data.json');
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(getData(), null, 2));
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", "data.json");
+    dlAnchor.click();
   });
 
   // Import JSON
@@ -1043,216 +1052,241 @@ function setupSettingsTab() {
     reader.onload = (event) => {
       try {
         const parsed = JSON.parse(event.target.result);
-        if (parsed && typeof parsed === 'object') {
-          saveData(parsed);
-          alert('Backup restored successfully!');
-          location.reload();
-        }
+        saveData(parsed);
+        alert('✓ Portfolio data restored successfully! Reloading...');
+        location.reload();
       } catch (err) {
-        alert('Invalid JSON file format.');
+        alert('⚠️ Invalid JSON file format.');
       }
     };
     reader.readAsText(file);
   });
 
-  // Reset to defaults
+  // Reset to Defaults
   document.getElementById('reset-defaults-btn').addEventListener('click', () => {
-    if (confirm('Are you sure you want to reset all data, theme, and password to defaults? This cannot be undone.')) {
+    if (confirm('⚠️ Are you sure you want to reset all portfolio data to defaults? This cannot be undone.')) {
       localStorage.removeItem('portfolio_data');
-      localStorage.removeItem('portfolio_password');
-      alert('Reset complete.');
+      alert('✓ Portfolio reset to default template. Reloading...');
       location.reload();
     }
   });
+
+  // ─── 1-CLICK GITHUB PUBLISH & SYNC ──────────────────────────────────────────
+  setupGitHubSync();
 }
 
-// ─── GITHUB API DIRECT PUBLISHER ──────────────────────────────────────────────
-function getCleanGitHubToken() {
-  let token = (document.getElementById('gh-token') || {}).value || localStorage.getItem('portfolio_gh_token') || '';
-  token = token.trim().replace(/^['"]+|['"]+$/g, '');
-  if (token.toLowerCase().startsWith('bearer ')) token = token.substring(7).trim();
-  if (token.toLowerCase().startsWith('token ')) token = token.substring(6).trim();
-  return token;
-}
+function setupGitHubSync() {
+  const tokenInput = document.getElementById('gh-token');
+  const publishBtn = document.getElementById('gh-publish-btn');
+  const testBtn = document.getElementById('gh-test-btn');
+  const saveTokenBtn = document.getElementById('gh-save-token-btn');
+  const sidebarPublishBtn = document.getElementById('sidebar-publish-btn');
+  const statusEl = document.getElementById('gh-publish-status');
 
-function getGitHubAuthHeader(token) {
-  // Support both classic tokens (token ghp_...) and fine-grained (Bearer github_pat_...)
-  if (token.startsWith('github_pat_')) {
-    return `Bearer ${token}`;
-  }
-  return `token ${token}`;
-}
-
-async function testGitHubConnection(triggerBtn) {
-  const token = getCleanGitHubToken();
-  if (!token) {
-    showGhStatus('⚠️ Please enter a GitHub Personal Access Token first.', false);
-    return;
+  // Load saved token if any
+  const savedToken = localStorage.getItem('portfolio_gh_token') || '';
+  if (tokenInput && savedToken) {
+    tokenInput.value = savedToken;
   }
 
-  const origText = triggerBtn.textContent;
-  triggerBtn.disabled = true;
-  triggerBtn.textContent = 'Testing...';
-
-  try {
-    const authHeader = getGitHubAuthHeader(token);
-    const repoRes = await fetch('https://api.github.com/repos/tzrob06/portfolio', {
-      headers: {
-        'Authorization': authHeader,
-        'Accept': 'application/vnd.github.v3+json'
+  // Save token button
+  if (saveTokenBtn) {
+    saveTokenBtn.addEventListener('click', () => {
+      const token = tokenInput.value.trim();
+      if (token) {
+        localStorage.setItem('portfolio_gh_token', token);
+        showStatus(statusEl, '✓ GitHub Token saved securely in your browser!', 'var(--green-bright)');
+      } else {
+        localStorage.removeItem('portfolio_gh_token');
+        showStatus(statusEl, 'Token removed.', 'var(--text-muted)');
       }
     });
+  }
 
-    if (repoRes.status === 401) {
-      throw new Error('Invalid token (401 Bad credentials). Check that you copied the complete token.');
-    } else if (repoRes.status === 404 || repoRes.status === 403) {
-      throw new Error('Repository access denied (403/404). Ensure your token has "repo" scope checked.');
-    } else if (!repoRes.ok) {
-      const errJson = await repoRes.json().catch(() => ({}));
-      throw new Error(errJson.message || `GitHub error ${repoRes.status}`);
+  // Test Connection button
+  if (testBtn) {
+    testBtn.addEventListener('click', async () => {
+      const token = tokenInput.value.trim();
+      if (!token) {
+        showStatus(statusEl, '⚠️ Please enter a GitHub Personal Access Token first.', '#f87171');
+        return;
+      }
+      showStatus(statusEl, 'Connecting to GitHub API...', 'var(--text-mid)');
+      try {
+        const userRes = await fetch('https://api.github.com/user', {
+          headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+        });
+        if (!userRes.ok) throw new Error('Invalid token or insufficient permissions.');
+        const userData = await userRes.json();
+        showStatus(statusEl, `✓ Connected to GitHub as @${userData.login}! Token is valid.`, 'var(--green-bright)');
+      } catch (err) {
+        showStatus(statusEl, `⚠️ GitHub Error: ${err.message}`, '#f87171');
+      }
+    });
+  }
+
+  // Publish to GitHub Handler
+  async function handlePublish() {
+    const token = tokenInput ? tokenInput.value.trim() : (localStorage.getItem('portfolio_gh_token') || '');
+    if (!token) {
+      // Switch to settings tab and highlight input
+      document.querySelector('[data-tab="settings"]').click();
+      if (tokenInput) tokenInput.focus();
+      showStatus(statusEl, '⚠️ Please provide a GitHub Personal Access Token to publish.', '#f87171');
+      return;
     }
 
-    const repoData = await repoRes.json();
-    showGhStatus(`✓ Connected to ${repoData.full_name}! Token is valid and ready to publish.`, true);
-  } catch (err) {
-    showGhStatus(`❌ Connection failed: ${err.message}`, false);
-  } finally {
-    triggerBtn.disabled = false;
-    triggerBtn.textContent = origText;
-  }
-}
-
-async function publishToGitHub(triggerBtn) {
-  let token = getCleanGitHubToken();
-
-  if (!token) {
-    const entered = prompt('Please enter your GitHub Personal Access Token to publish live to tzrob06/portfolio:');
-    if (!entered || !entered.trim()) return;
-    token = entered.trim().replace(/^['"]+|['"]+$/g, '');
+    // Save token for future clicks
     localStorage.setItem('portfolio_gh_token', token);
-    const input = document.getElementById('gh-token');
-    if (input) input.value = token;
-  }
 
-  const originalContent = triggerBtn ? triggerBtn.innerHTML : '';
-  if (triggerBtn) {
-    triggerBtn.disabled = true;
-    triggerBtn.textContent = 'Pushing to GitHub...';
-  }
+    showStatus(statusEl, '⏳ Connecting to GitHub repository...', 'var(--text-mid)');
+    if (publishBtn) publishBtn.disabled = true;
 
-  try {
-    const repoOwner = 'tzrob06';
-    const repoName = 'portfolio';
-    const filePath = 'data.json';
-    const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
-    const authHeader = getGitHubAuthHeader(token);
+    try {
+      // 1. Identify GitHub user and determine repo name from URL or origin
+      const userRes = await fetch('https://api.github.com/user', {
+        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (!userRes.ok) throw new Error('Could not authenticate with GitHub token. Please check permissions.');
+      const userData = await userRes.json();
+      const owner = userData.login;
 
-    // 1. Get current SHA of data.json
-    let currentSha = null;
-    const getRes = await fetch(apiUrl, {
-      headers: {
-        'Authorization': authHeader,
-        'Accept': 'application/vnd.github.v3+json'
+      // Extract repo name from path (e.g., /portfolio/ or fallback to portfolio)
+      let repo = 'portfolio';
+      const pathParts = window.location.pathname.split('/').filter(p => p && !p.endsWith('.html'));
+      if (pathParts.length > 0) {
+        repo = pathParts[0];
       }
-    });
 
-    if (getRes.ok) {
-      const getJson = await getRes.json();
-      currentSha = getJson.sha;
-    } else if (getRes.status === 401) {
-      throw new Error('Invalid GitHub token (401 Bad credentials). Please verify your token.');
-    } else if (getRes.status === 403 || getRes.status === 404) {
-      throw new Error('Permission denied. Make sure your GitHub token has the "repo" scope checked.');
-    }
+      showStatus(statusEl, `⏳ Fetching repository ${owner}/${repo}...`, 'var(--text-mid)');
 
-    // 2. Prepare UTF-8 base64 encoded data.json content
-    const dataObj = getData();
-    const jsonString = JSON.stringify(dataObj, null, 2);
-    const utf8Bytes = new TextEncoder().encode(jsonString);
-    
-    // Chunked binary conversion to prevent stack overflow on large data
-    let binary = '';
-    const chunkSize = 8192;
-    for (let i = 0; i < utf8Bytes.length; i += chunkSize) {
-      const chunk = utf8Bytes.subarray(i, i + chunkSize);
-      binary += String.fromCharCode.apply(null, chunk);
-    }
-    const base64Content = btoa(binary);
+      // 2. Fetch current data.json file info to get its SHA (required for updating)
+      let fileSha = null;
+      try {
+        const fileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json`, {
+          headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+        });
+        if (fileRes.ok) {
+          const fileData = await fileRes.json();
+          fileSha = fileData.sha;
+        }
+      } catch (e) {}
 
-    // 3. PUT commit to GitHub
-    const putBody = {
-      message: 'Update portfolio data via admin panel',
-      content: base64Content,
-      branch: 'main'
-    };
-    if (currentSha) {
-      putBody.sha = currentSha;
-    }
-
-    const putRes = await fetch(apiUrl, {
-      method: 'PUT',
-      headers: {
-        'Authorization': authHeader,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(putBody)
-    });
-
-    const putJson = await putRes.json();
-
-    if (putRes.ok) {
-      showGhStatus('✓ Published to GitHub! Live site is now updated.', true);
-      alert('🎉 Success! Your latest changes have been pushed directly to GitHub. The live website is updated!');
-    } else {
-      let errMsg = putJson.message || 'Failed to update GitHub repository.';
-      if (putRes.status === 422) {
-        errMsg = 'GitHub error (422): Content too large or SHA mismatch. Try clicking again.';
+      // 3. Prepare updated data.json content in base64
+      const currentData = getData();
+      const jsonContent = JSON.stringify(currentData, null, 2);
+      
+      // UTF-8 to Base64 (supporting all international characters and emojis)
+      const utf8Bytes = new TextEncoder().encode(jsonContent);
+      let binaryStr = '';
+      const chunkSize = 8192;
+      for (let i = 0; i < utf8Bytes.length; i += chunkSize) {
+        binaryStr += String.fromCharCode.apply(null, utf8Bytes.subarray(i, i + chunkSize));
       }
-      throw new Error(errMsg);
-    }
-  } catch (err) {
-    showGhStatus(`❌ Publish error: ${err.message}`, false);
-    alert(`Could not push to GitHub:\n\n${err.message}\n\nTip: You can click "Test Connection" in Settings & Data to verify your token.`);
-  } finally {
-    if (triggerBtn) {
-      triggerBtn.disabled = false;
-      triggerBtn.innerHTML = originalContent;
+      const base64Content = btoa(binaryStr);
+
+      showStatus(statusEl, `⏳ Pushing updated data.json to GitHub (${owner}/${repo})...`, 'var(--text-mid)');
+
+      // 4. Send PUT request to GitHub Contents API
+      const putBody = {
+        message: `Update portfolio content via Admin Dashboard (${new Date().toLocaleTimeString()})`,
+        content: base64Content,
+        branch: 'main'
+      };
+      if (fileSha) putBody.sha = fileSha;
+
+      const pushRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github.v3+json'
+        },
+        body: JSON.stringify(putBody)
+      });
+
+      if (!pushRes.ok) {
+        const errJson = await pushRes.json();
+        throw new Error(errJson.message || 'GitHub upload failed');
+      }
+
+      showStatus(
+        statusEl,
+        `✓ Success! Published directly to ${owner}/${repo}. GitHub Pages will update your live site in ~30 seconds!`,
+        'var(--green-bright)'
+      );
+    } catch (err) {
+      showStatus(statusEl, `⚠️ Publish failed: ${err.message}`, '#f87171');
+    } finally {
+      if (publishBtn) publishBtn.disabled = false;
     }
   }
+
+  if (publishBtn) publishBtn.addEventListener('click', handlePublish);
+  if (sidebarPublishBtn) sidebarPublishBtn.addEventListener('click', handlePublish);
 }
 
-function showGhStatus(msg, isSuccess) {
-  const el = document.getElementById('gh-publish-status');
+function showStatus(el, msg, color = 'inherit') {
   if (!el) return;
   el.textContent = msg;
-  el.style.color = isSuccess ? 'var(--green-bright)' : '#f87171';
+  el.style.color = color;
   el.classList.add('show');
 }
 
-// ─── MODAL HELPERS ────────────────────────────────────────────────────
+// ─── MODAL CONTROLS ───────────────────────────────────────────────────────────
 function setupModals() {
-  document.querySelectorAll('[data-modal]').forEach(el => {
-    el.addEventListener('click', () => {
-      const modalId = el.getAttribute('data-modal');
-      closeModal(modalId);
+  document.querySelectorAll('.modal-close, [data-modal]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modalId = btn.dataset.modal;
+      if (modalId) closeModal(modalId);
+    });
+  });
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.hidden = true;
+      }
     });
   });
 }
 
 function openModal(id) {
-  const m = document.getElementById(id);
-  if (m) m.removeAttribute('hidden');
+  const modal = document.getElementById(id);
+  if (modal) modal.hidden = false;
 }
 
 function closeModal(id) {
-  const m = document.getElementById(id);
-  if (m) m.setAttribute('hidden', '');
+  const modal = document.getElementById(id);
+  if (modal) modal.hidden = true;
 }
 
 function showSaveMsg(id) {
   const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 3000);
+  if (el) {
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3000);
+  }
+}
+
+// ─── COLOR UTILITIES ──────────────────────────────────────────────────────────
+function adjustColorBrightness(hex, percent) {
+  if (!hex || hex[0] !== '#') return hex;
+  let num = parseInt(hex.slice(1), 16);
+  let r = (num >> 16) + percent;
+  let g = ((num >> 8) & 0x00FF) + percent;
+  let b = (num & 0x0000FF) + percent;
+  r = Math.min(255, Math.max(0, r));
+  g = Math.min(255, Math.max(0, g));
+  b = Math.min(255, Math.max(0, b));
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
+function hexToRgba(hex, alpha) {
+  if (!hex || hex[0] !== '#') return hex;
+  let num = parseInt(hex.slice(1), 16);
+  let r = (num >> 16);
+  let g = ((num >> 8) & 0x00FF);
+  let b = (num & 0x0000FF);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }

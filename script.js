@@ -119,7 +119,8 @@ const DEFAULTS = {
     email: "you@email.com",
     school: "Trinity College",
     program: "B.S. Engineering & Computer Science ('28)",
-    availability: "Open to internships & research collaborations"
+    availability: "Open to internships & research collaborations",
+    resumeUrl: ""
   },
   headings: {
     siteTitle: "Thomas Z. Roberts | Portfolio",
@@ -374,6 +375,23 @@ function render() {
   setText('hero-btn-contact', h.heroBtnContact);
   setPhoto('hero-photo', p.photo);
 
+  // Resume buttons (Hero & About)
+  const resumeUrl = p.resumeUrl || '';
+  const heroResumeBtn = document.getElementById('hero-btn-resume');
+  if (heroResumeBtn) {
+    if (resumeUrl && resumeUrl.trim() !== '' && resumeUrl !== '#') {
+      heroResumeBtn.href = resumeUrl.trim();
+      heroResumeBtn.style.display = 'inline-flex';
+      if (resumeUrl.startsWith('data:') || resumeUrl.endsWith('.pdf')) {
+        heroResumeBtn.setAttribute('download', `${(p.name || 'Resume').replace(/\s+/g, '_')}_Resume.pdf`);
+      } else {
+        heroResumeBtn.removeAttribute('download');
+      }
+    } else {
+      heroResumeBtn.style.display = 'none';
+    }
+  }
+
   // About
   setText('about-eyebrow', h.aboutEyebrow);
   setText('about-heading-prefix', h.aboutPrefix);
@@ -386,6 +404,22 @@ function render() {
   setText('about-connect-btn', h.aboutBtn);
   setAttr('about-email-link', 'href', 'mailto:' + p.email);
   setPhoto('about-photo', p.photo);
+
+  const aboutResumeWrap = document.getElementById('about-resume-wrap');
+  const aboutResumeLink = document.getElementById('about-resume-link');
+  if (aboutResumeWrap && aboutResumeLink) {
+    if (resumeUrl && resumeUrl.trim() !== '' && resumeUrl !== '#') {
+      aboutResumeLink.href = resumeUrl.trim();
+      aboutResumeWrap.style.display = 'flex';
+      if (resumeUrl.startsWith('data:') || resumeUrl.endsWith('.pdf')) {
+        aboutResumeLink.setAttribute('download', `${(p.name || 'Resume').replace(/\s+/g, '_')}_Resume.pdf`);
+      } else {
+        aboutResumeLink.removeAttribute('download');
+      }
+    } else {
+      aboutResumeWrap.style.display = 'none';
+    }
+  }
 
   // Experience section labels & list
   setText('experience-eyebrow', h.experienceEyebrow || 'Experience');
