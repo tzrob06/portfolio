@@ -428,7 +428,7 @@ function render() {
   toggleLink('social-instagram', s.instagram);
 
   // Footer
-  setText('footer-name', `\u00A9 ${new Date().getFullYear()} Thomas Roberts. All rights reserved.`);
+  setText('footer-name', `\u00A9 ${new Date().getFullYear()} Thomas Roberts`);
   setText('footer-monogram', p.monogram || initials(p.name));
 }
 
