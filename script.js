@@ -134,14 +134,14 @@ const DEFAULTS = {
     aboutPrefix: "Hello, I'm",
     aboutBtn: "Let's Connect",
     experienceEyebrow: "Experience",
-    experienceTitlePrefix: "Work &",
+    experienceTitlePrefix: "",
     experienceTitleAccent: "Experience",
     projectsEyebrow: "Projects",
-    projectsTitlePrefix: "Selected",
+    projectsTitlePrefix: "",
     projectsTitleAccent: "Projects",
-    skillsEyebrow: "Capabilities",
-    skillsTitlePrefix: "Skills &",
-    skillsTitleAccent: "Strengths",
+    skillsEyebrow: "Skills",
+    skillsTitlePrefix: "",
+    skillsTitleAccent: "Skills",
     contactEyebrow: "Contact",
     contactTitlePrefix: "Get In",
     contactTitleAccent: "Touch",
@@ -388,21 +388,21 @@ function render() {
   setPhoto('about-photo', p.photo);
 
   // Experience section labels & list
-  setText('experience-eyebrow', h.experienceEyebrow);
-  setText('experience-title-prefix', h.experienceTitlePrefix);
-  setText('experience-title-accent', h.experienceTitleAccent);
+  setText('experience-eyebrow', h.experienceEyebrow || 'Experience');
+  setText('experience-title-prefix', h.experienceTitlePrefix ? h.experienceTitlePrefix + ' ' : '');
+  setText('experience-title-accent', h.experienceTitleAccent || 'Experience');
   renderExperience(d.experience || DEFAULTS.experience);
 
   // Projects section labels & list
-  setText('projects-eyebrow', h.projectsEyebrow);
-  setText('projects-title-prefix', h.projectsTitlePrefix);
-  setText('projects-title-accent', h.projectsTitleAccent);
+  setText('projects-eyebrow', h.projectsEyebrow || 'Projects');
+  setText('projects-title-prefix', h.projectsTitlePrefix ? h.projectsTitlePrefix + ' ' : '');
+  setText('projects-title-accent', h.projectsTitleAccent || 'Projects');
   renderProjects(d.projects || DEFAULTS.projects);
 
   // Skills section labels & list
-  setText('skills-eyebrow', h.skillsEyebrow);
-  setText('skills-title-prefix', h.skillsTitlePrefix);
-  setText('skills-title-accent', h.skillsTitleAccent);
+  setText('skills-eyebrow', h.skillsEyebrow || 'Skills');
+  setText('skills-title-prefix', h.skillsTitlePrefix ? h.skillsTitlePrefix + ' ' : '');
+  setText('skills-title-accent', h.skillsTitleAccent || 'Skills');
   renderSkills(d.skills || DEFAULTS.skills);
 
   // Contact section labels
