@@ -110,19 +110,19 @@ const THEME_PRESETS = {
 // ─── DEFAULT PORTFOLIO DATA ───────────────────────────────────────────────────
 const DEFAULTS = {
   profile: {
-    name: "Your Name",
-    monogram: "YN",
-    tagline: "Student & Creative Thinker",
-    bio: "I'm a student passionate about design, problem-solving, and building things that matter. Currently exploring opportunities to apply my skills in the real world through internships and collaborative projects.",
+    name: "Thomas Z. Roberts",
+    monogram: "TZR",
+    tagline: "Engineering & Computer Science Student · Trinity College",
+    bio: "I'm an Engineering and Computer Science student at Trinity College (Class of 2028), recognized as a Deans' Scholar with Faculty Honors. Alongside my coursework, I serve as a Quantitative Tutor at the Aetna Quantitative Center and actively participate in the Computer Science Club and Running Club. Passionate about software engineering, quantitative problem solving, and building impactful technology.",
     photo: "",
-    location: "Your City",
+    location: "Hartford, CT",
     email: "you@email.com",
-    school: "Your University",
-    program: "Your Field of Study",
-    availability: "Open to internships & collaborations"
+    school: "Trinity College",
+    program: "B.S. Engineering & Computer Science ('28)",
+    availability: "Open to internships & research collaborations"
   },
   headings: {
-    siteTitle: "Portfolio",
+    siteTitle: "Thomas Z. Roberts | Portfolio",
     navAbout: "About",
     navExperience: "Experience",
     navProjects: "Projects",
@@ -130,7 +130,7 @@ const DEFAULTS = {
     navContact: "Contact",
     heroBtnProjects: "View My Work",
     heroBtnContact: "Get In Touch",
-    aboutEyebrow: "About",
+    aboutEyebrow: "About Me",
     aboutPrefix: "Hello, I'm",
     aboutBtn: "Let's Connect",
     experienceEyebrow: "Experience",
@@ -156,46 +156,107 @@ const DEFAULTS = {
   experience: [
     {
       id: 1,
-      role: "Student Research Assistant",
-      company: "University Innovation Lab",
-      location: "On-Campus",
-      startDate: "Sep 2023",
+      role: "Quantitative Tutor",
+      company: "Aetna Quantitative Center · Trinity College",
+      location: "Hartford, CT",
+      startDate: "Sep 2024",
       endDate: "Present",
-      description: "Assisting faculty with data collection, user testing, and synthesizing research insights into presentations."
+      description: "Tutoring undergraduate students in mathematics, quantitative reasoning, and engineering coursework, helping peers master foundational concepts and analytical problem solving."
     },
     {
       id: 2,
-      role: "Design & Content Intern",
-      company: "Creative Studio",
-      location: "Remote",
-      startDate: "Jun 2023",
-      endDate: "Aug 2023",
-      description: "Collaborated with the creative team on digital assets, brand guidelines, and presentation collateral for client briefs."
+      role: "Active Member & Collaborator",
+      company: "Trinity College Computer Science Club",
+      location: "Hartford, CT",
+      startDate: "Sep 2024",
+      endDate: "Present",
+      description: "Participating in technical coding workshops, collaborative software development sessions, and collegiate hackathons."
+    },
+    {
+      id: 3,
+      role: "Deans' Scholar & Honors Recipient",
+      company: "Trinity College",
+      location: "Hartford, CT",
+      startDate: "2024",
+      endDate: "Present",
+      description: "Awarded Deans' Scholar distinction and Faculty Honors in recognition of outstanding academic achievement."
     }
   ],
   projects: [
-    { id: 1, title: "Research & Analysis Initiative", year: "2024", description: "A comprehensive project exploring emerging trends in sustainability and human-centered design. Synthesized findings into an actionable report and presentation.", category: "Research", link: "#", image: "" },
-    { id: 2, title: "Collaborative Design Sprint", year: "2024", description: "Worked in a cross-functional student team to design, test, and prototype a user-centric solution for a real-world brief within 72 hours.", category: "Teamwork", link: "#", image: "" },
-    { id: 3, title: "Independent Study Project", year: "2023", description: "Self-directed capstone project exploring visual communication and digital storytelling. Showcased at the university department exhibition.", category: "Creative", link: "#", image: "" },
-    { id: 4, title: "Community Volunteer Work", year: "2023", description: "Coordinated outreach and logistics for a community initiative, managing peers and delivering on-the-ground support.", category: "Leadership", link: "#", image: "" }
+    {
+      id: 1,
+      title: "Interactive Personal Portfolio & CMS",
+      year: "2024",
+      description: "Designed and developed a responsive personal portfolio with dynamic themes, an admin control panel, and automated GitHub sync for real-time publishing.",
+      category: "Software / Web",
+      link: "https://tzrob06.github.io/portfolio/",
+      image: ""
+    },
+    {
+      id: 2,
+      title: "Quantitative & Engineering Modeling",
+      year: "2024",
+      description: "Applied computational methods and structured problem-solving to analyze engineering and mathematical systems.",
+      category: "Engineering",
+      link: "#",
+      image: ""
+    },
+    {
+      id: 3,
+      title: "Collaborative Software Development Sprint",
+      year: "2024",
+      description: "Worked in team settings to rapidly design, prototype, and test software solutions.",
+      category: "Teamwork",
+      link: "#",
+      image: ""
+    }
   ],
   skills: [
-    { id: 1, title: "Research & Synthesis", description: "Comfortable distilling complex datasets and literature into clear, actionable takeaways." },
-    { id: 2, title: "Communication", description: "Strong written and presentation skills across academic, professional, and creative formats." },
-    { id: 3, title: "Project Coordination", description: "Experienced in managing milestones, task allocation, and team deadlines smoothly." },
-    { id: 4, title: "Creative Problem-Solving", description: "Approaching challenges with curiosity, iterative testing, and multidisciplinary ideas." },
-    { id: 5, title: "Collaboration & Teamwork", description: "Thrive in diverse group settings and enjoy bringing out the best in team members." },
-    { id: 6, title: "Adaptability & Growth", description: "Quick to learn new tools, technologies, and methodologies with high enthusiasm." }
+    {
+      id: 1,
+      title: "Computer Science & Software Engineering",
+      description: "Proficiency with core programming principles, data structures, algorithms, and web application architecture."
+    },
+    {
+      id: 2,
+      title: "Quantitative Reasoning & Analysis",
+      description: "Strong foundation in applied mathematics, analytical modeling, and systematic engineering methods."
+    },
+    {
+      id: 3,
+      title: "Peer Tutoring & Technical Communication",
+      description: "Proven ability to articulate complex technical and mathematical concepts clearly to students of diverse backgrounds."
+    },
+    {
+      id: 4,
+      title: "Problem-Solving & Critical Thinking",
+      description: "Iterative, analytical approach to diagnosing complex engineering challenges and optimizing solutions."
+    },
+    {
+      id: 5,
+      title: "Team Collaboration & Campus Leadership",
+      description: "Thrive in collaborative environments, active in student organizations and peer mentoring initiatives."
+    },
+    {
+      id: 6,
+      title: "Continuous Learning & Adaptability",
+      description: "Passionate about exploring emerging technologies, developer tooling, and expanding technical horizons."
+    }
   ],
-  social: { linkedin: "#", github: "#", twitter: "", instagram: "" },
-  contact: {
-    email: "you@email.com",
-    location: "Your City",
-    message: "Have a project in mind, an internship opportunity, or just want to say hi? My inbox is always open.",
-    formspreeUrl: "",
-    web3formsKey: ""
+  social: {
+    "linkedin": "https://www.linkedin.com/in/thomaszroberts/",
+    "github": "https://github.com/tzrob06",
+    "twitter": "",
+    "instagram": ""
   },
-  inbox: []
+  "contact": {
+    "email": "you@email.com",
+    "location": "Hartford, CT",
+    "message": "Interested in connecting regarding internship opportunities, research collaborations, or software projects? Feel free to reach out directly through this form!",
+    "formspreeUrl": "",
+    "web3formsKey": ""
+  },
+  "inbox": []
 };
 
 // ─── APPLY THEME VARIABLES ────────────────────────────────────────────────────
@@ -367,7 +428,7 @@ function render() {
   toggleLink('social-instagram', s.instagram);
 
   // Footer
-  setText('footer-name', `${p.name} · Student Portfolio`);
+  setText('footer-name', `\u00A9 ${new Date().getFullYear()} Thomas Roberts. All rights reserved.`);
   setText('footer-monogram', p.monogram || initials(p.name));
 }
 

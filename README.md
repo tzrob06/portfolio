@@ -111,3 +111,7 @@ To run this project locally on your machine:
 * **Website**: [tzrob06.github.io/portfolio](https://tzrob06.github.io/portfolio/)
 * **LinkedIn**: [linkedin.com/in/thomaszroberts](https://www.linkedin.com/in/thomaszroberts/)
 * **GitHub**: [@tzrob06](https://github.com/tzrob06)
+
+---
+
+&copy; 2026 Thomas Roberts. All rights reserved.
