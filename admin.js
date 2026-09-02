@@ -24,7 +24,62 @@ function logout() {
 }
 
 function saveData(data) {
-  localStorage.setItem('portfolio_data', JSON.stringify(data));
+  try {
+    localStorage.setItem('portfolio_data', JSON.stringify(data));
+    return true;
+  } catch (err) {
+    console.error('Error saving data to localStorage:', err);
+    if (err.name === 'QuotaExceededError' || err.code === 22) {
+      alert('⚠️ Browser storage quota exceeded. The image file is too large. Please select a smaller photo.');
+    } else {
+      alert('⚠️ Could not save settings: ' + err.message);
+    }
+    return false;
+  }
+}
+
+// ─── IMAGE COMPRESSION & RESIZING UTILITY ──────────────────────────────────────
+function compressImageFile(file, maxWidth = 800, maxHeight = 800, quality = 0.82, callback) {
+  if (!file) return;
+  
+  // Show loading indicator in thumb if available
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth || height > maxHeight) {
+        if (width > height) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        } else {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+      if (typeof callback === 'function') {
+        callback(compressedDataUrl);
+      }
+    };
+    img.onerror = () => {
+      alert('⚠️ Unable to process this image format. Please select a standard JPG or PNG.');
+    };
+    img.src = e.target.result;
+  };
+  reader.onerror = () => {
+    alert('⚠️ Could not read file from your device.');
+  };
+  reader.readAsDataURL(file);
 }
 
 // ─── INIT ADMIN VIEW ──────────────────────────────────────────────────────────
@@ -128,18 +183,17 @@ function populateProfileTab() {
     updatePhotoThumb('prof-photo-thumb', 'prof-photo-remove', photoInput.value.trim());
   });
 
-  // Handle File upload
+  // Handle File upload with automatic compression
   const fileInput = document.getElementById('prof-photo-file');
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target.result;
-      photoInput.value = base64;
-      updatePhotoThumb('prof-photo-thumb', 'prof-photo-remove', base64);
-    };
-    reader.readAsDataURL(file);
+    const thumb = document.getElementById('prof-photo-thumb');
+    if (thumb) thumb.textContent = 'Optimizing...';
+    compressImageFile(file, 800, 800, 0.85, (compressedBase64) => {
+      photoInput.value = compressedBase64;
+      updatePhotoThumb('prof-photo-thumb', 'prof-photo-remove', compressedBase64);
+    });
   });
 
   // Handle Remove Photo button
@@ -468,13 +522,12 @@ function populateProjectsTab() {
   pmFileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target.result;
-      pmImageInput.value = base64;
-      updatePhotoThumb('pm-image-thumb', 'pm-image-remove', base64);
-    };
-    reader.readAsDataURL(file);
+    const thumb = document.getElementById('pm-image-thumb');
+    if (thumb) thumb.textContent = 'Optimizing...';
+    compressImageFile(file, 800, 800, 0.85, (compressedBase64) => {
+      pmImageInput.value = compressedBase64;
+      updatePhotoThumb('pm-image-thumb', 'pm-image-remove', compressedBase64);
+    });
   });
 
   document.getElementById('pm-image-remove').addEventListener('click', () => {
