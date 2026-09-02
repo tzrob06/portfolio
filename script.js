@@ -565,8 +565,13 @@ function setAttr(id, attr, val) { const el = document.getElementById(id); if (el
 function setPhoto(id, url) {
   const el = document.getElementById(id);
   if (!el) return;
-  if (url) { el.style.backgroundImage = `url('${url}')`; el.classList.add('has-photo'); }
-  else { el.style.backgroundImage = ''; el.classList.remove('has-photo'); }
+  if (url && url.trim() !== '') {
+    el.style.backgroundImage = 'url("' + url.trim() + '")';
+    el.classList.add('has-photo');
+  } else {
+    el.style.backgroundImage = '';
+    el.classList.remove('has-photo');
+  }
 }
 function toggleLink(id, href) {
   const el = document.getElementById(id);

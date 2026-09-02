@@ -183,23 +183,51 @@ function populateProfileTab() {
     updatePhotoThumb('prof-photo-thumb', 'prof-photo-remove', photoInput.value.trim());
   });
 
-  // Handle File upload with automatic compression
+  // Handle Choose Image File button & thumbnail click
+  const fileBtn = document.getElementById('prof-photo-btn');
   const fileInput = document.getElementById('prof-photo-file');
-  fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
+  const thumb = document.getElementById('prof-photo-thumb');
+
+  if (fileBtn && fileInput) {
+    fileBtn.addEventListener('click', () => fileInput.click());
+  }
+  if (thumb && fileInput) {
+    thumb.addEventListener('click', () => fileInput.click());
+    
+    // Drag & drop
+    thumb.addEventListener('dragover', (e) => { e.preventDefault(); thumb.style.borderColor = 'var(--green-bright)'; });
+    thumb.addEventListener('dragleave', () => { thumb.style.borderColor = 'var(--border)'; });
+    thumb.addEventListener('drop', (e) => {
+      e.preventDefault();
+      thumb.style.borderColor = 'var(--border)';
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processProfilePhoto(e.dataTransfer.files[0]);
+      }
+    });
+  }
+
+  function processProfilePhoto(file) {
     if (!file) return;
-    const thumb = document.getElementById('prof-photo-thumb');
     if (thumb) thumb.textContent = 'Optimizing...';
     compressImageFile(file, 800, 800, 0.85, (compressedBase64) => {
       photoInput.value = compressedBase64;
       updatePhotoThumb('prof-photo-thumb', 'prof-photo-remove', compressedBase64);
     });
-  });
+  }
+
+  // Handle File upload with automatic compression
+  if (fileInput) {
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        processProfilePhoto(e.target.files[0]);
+      }
+    });
+  }
 
   // Handle Remove Photo button
   document.getElementById('prof-photo-remove').addEventListener('click', () => {
     photoInput.value = '';
-    fileInput.value = '';
+    if (fileInput) fileInput.value = '';
     updatePhotoThumb('prof-photo-thumb', 'prof-photo-remove', '');
   });
 
@@ -318,8 +346,8 @@ function updatePhotoThumb(thumbId, removeBtnId, url) {
   const removeBtn = document.getElementById(removeBtnId);
   if (!thumb) return;
 
-  if (url && url.length > 0) {
-    thumb.style.backgroundImage = `url('${url}')`;
+  if (url && url.trim().length > 0) {
+    thumb.style.backgroundImage = 'url("' + url.trim() + '")';
     thumb.textContent = '';
     if (removeBtn) removeBtn.style.display = 'inline-block';
   } else {
@@ -514,25 +542,50 @@ function populateProjectsTab() {
 
   // Project Modal Image Upload handlers
   const pmImageInput = document.getElementById('pm-image');
+  const pmFileBtn = document.getElementById('pm-image-btn');
+  const pmFileInput = document.getElementById('pm-image-file');
+  const pmThumb = document.getElementById('pm-image-thumb');
+
   pmImageInput.addEventListener('input', () => {
     updatePhotoThumb('pm-image-thumb', 'pm-image-remove', pmImageInput.value.trim());
   });
 
-  const pmFileInput = document.getElementById('pm-image-file');
-  pmFileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
+  if (pmFileBtn && pmFileInput) {
+    pmFileBtn.addEventListener('click', () => pmFileInput.click());
+  }
+  if (pmThumb && pmFileInput) {
+    pmThumb.addEventListener('click', () => pmFileInput.click());
+    pmThumb.addEventListener('dragover', (e) => { e.preventDefault(); pmThumb.style.borderColor = 'var(--green-bright)'; });
+    pmThumb.addEventListener('dragleave', () => { pmThumb.style.borderColor = 'var(--border)'; });
+    pmThumb.addEventListener('drop', (e) => {
+      e.preventDefault();
+      pmThumb.style.borderColor = 'var(--border)';
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processProjectPhoto(e.dataTransfer.files[0]);
+      }
+    });
+  }
+
+  function processProjectPhoto(file) {
     if (!file) return;
-    const thumb = document.getElementById('pm-image-thumb');
-    if (thumb) thumb.textContent = 'Optimizing...';
+    if (pmThumb) pmThumb.textContent = 'Optimizing...';
     compressImageFile(file, 800, 800, 0.85, (compressedBase64) => {
       pmImageInput.value = compressedBase64;
       updatePhotoThumb('pm-image-thumb', 'pm-image-remove', compressedBase64);
     });
-  });
+  }
+
+  if (pmFileInput) {
+    pmFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        processProjectPhoto(e.target.files[0]);
+      }
+    });
+  }
 
   document.getElementById('pm-image-remove').addEventListener('click', () => {
     pmImageInput.value = '';
-    pmFileInput.value = '';
+    if (pmFileInput) pmFileInput.value = '';
     updatePhotoThumb('pm-image-thumb', 'pm-image-remove', '');
   });
 

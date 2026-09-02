@@ -141,13 +141,13 @@
               <div class="form-group span-2">
                 <label>Profile Photo</label>
                 <div class="image-upload-wrap">
-                  <div class="image-preview-thumb" id="prof-photo-thumb">No Image</div>
+                  <div class="image-preview-thumb" id="prof-photo-thumb" style="cursor:pointer;" title="Click or drag image here">No Image</div>
                   <div class="image-upload-controls">
-                    <label class="file-btn" for="prof-photo-file">
+                    <button type="button" class="file-btn" id="prof-photo-btn">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                      Upload Image from Computer
-                      <input type="file" id="prof-photo-file" accept="image/*" style="display: none;" />
-                    </label>
+                      Choose Image File
+                    </button>
+                    <input type="file" id="prof-photo-file" accept="image/png, image/jpeg, image/jpg, image/webp, image/gif, image/*" style="display: none;" />
                     <input type="text" id="prof-photo" placeholder="Or paste image URL (https://...)" />
                     <button type="button" id="prof-photo-remove" class="btn-ghost" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; align-self: flex-start; border-radius: 6px; display: none;">Remove Photo</button>
                   </div>
@@ -736,11 +736,11 @@
             <div class="image-upload-wrap">
               <div class="image-preview-thumb" id="pm-image-thumb">No Image</div>
               <div class="image-upload-controls">
-                <label class="file-btn" for="pm-image-file">
+                <button type="button" class="file-btn" id="pm-image-btn">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  Upload Image from Computer
-                  <input type="file" id="pm-image-file" accept="image/*" style="display: none;" />
-                </label>
+                  Choose Image File
+                </button>
+                <input type="file" id="pm-image-file" accept="image/png, image/jpeg, image/jpg, image/webp, image/gif, image/*" style="display: none;" />
                 <input type="text" id="pm-image" placeholder="Or paste image URL (https://...)" />
                 <button type="button" id="pm-image-remove" class="btn-ghost" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; align-self: flex-start; border-radius: 6px; display: none;">Remove Image</button>
               </div>
