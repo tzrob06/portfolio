@@ -1,6 +1,5 @@
 # Thomas Z. Roberts | Personal Portfolio & Web Platform
 
-[![Live Demo](https://img.shields.io/badge/Live_Site-portfoliothomasroberts.vercel.app%2Fportfolio-4ade80?style=for-the-badge&logo=githubpages&logoColor=black)](portfoliothomasroberts.vercel.app)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
@@ -108,6 +107,5 @@ To run this project locally on your machine:
 
 ## 📬 Contact & Connect
 
-* **Website**: [tzrob06.github.io/portfolio](https://tzrob06.github.io/portfolio/)
 * **LinkedIn**: [linkedin.com/in/thomaszroberts](https://www.linkedin.com/in/thomaszroberts/)
 * **GitHub**: [@tzrob06](https://github.com/tzrob06)
